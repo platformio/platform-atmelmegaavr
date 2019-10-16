@@ -1,6 +1,6 @@
 # Atmel megaAVR: development platform for [PlatformIO](http://platformio.org)
 [![Build Status](https://travis-ci.org/platformio/platform-atmelmegaavr.svg?branch=develop)](https://travis-ci.org/platformio/platform-atmelmegaavr)
-[![Build status](https://ci.appveyor.com/api/projects/status/ympddo5w1osqx6qr/branch/develop?svg=true)](https://ci.appveyor.com/project/ivankravets/platform-atmelmegaavr/branch/develop)
+[![Build status](https://ci.appveyor.com/api/projects/status/wm6hx8n8c23dfbnk/branch/develop?svg=true)](https://ci.appveyor.com/project/ivankravets/platform-atmelmegaavr/branch/develop)
 
 Microchip's megaAVR is suitable for applications requiring large amounts of code and offers substantial program and data memories with performance up to 20 MIPS. Based on industry-leading, proven technology, the megaAVR family offers Microchip's widest selection of devices in terms of memories, pin counts, and peripherals.
 
