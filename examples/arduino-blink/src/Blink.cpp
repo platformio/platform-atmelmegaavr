@@ -14,8 +14,6 @@ void setup()
 
 void loop()
 {
-  int* a = 0;
-  *a = 5;
   // turn the LED on (HIGH is the voltage level)
   digitalWrite(LED_BUILTIN, HIGH);
   // wait for a second
