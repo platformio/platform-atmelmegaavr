@@ -29,10 +29,10 @@ How to build PlatformIO based project
     > platformio run --target upload
 
     # Build specific environment
-    > platformio run -e uno2018
+    > platformio run -e uno_wifi_rev2
 
     # Upload firmware for the specific environment
-    > platformio run -e uno2018 --target upload
+    > platformio run -e uno_wifi_rev2 --target upload
 
     # Clean build files
     > platformio run --target clean

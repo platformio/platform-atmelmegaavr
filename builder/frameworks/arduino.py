@@ -69,7 +69,7 @@ env.Append(
 # Bootloader and fuses for uploading purposes
 bootloader_config = board.get("bootloader", {})
 if "BOOTLOADER_CMD" not in env:
-    if env.subst("$BOARD") == "uno2018":
+    if env.subst("$BOARD") == "uno_wifi_rev2":
         bootloader_path = join(
             FRAMEWORK_DIR, "bootloaders", board.get("bootloader.file", ""))
         if isfile(bootloader_path):
