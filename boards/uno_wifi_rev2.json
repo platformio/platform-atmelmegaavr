@@ -1,0 +1,39 @@
+{
+  "build": {
+    "core": "arduino",
+    "extra_flags": "-DARDUINO_AVR_UNO_WIFI_REV2 -DUNO_WIFI_REV2_328MODE -DMILLIS_USE_TIMERB3",
+    "text_section_start": "0x200",
+    "f_cpu": "16000000L",
+    "hwids": [
+      [
+        "0x03eb",
+        "0x2145"
+      ]
+    ],
+    "mcu": "atmega4809",
+    "usb_product": "Arduino Uno WiFi Rev2",
+    "variant": "uno2018"
+  },
+  "bootloader": {
+    "file": "atmega4809_uart_bl.hex",
+    "fuses_file": "fuses_4809.bin",
+    "BOOTEND": "0x02", 
+    "SYSCFG0": "0xC9", 
+    "OSCCFG": "0x01"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "Arduino Uno WiFi Rev2",
+  "upload": {
+    "disable_flushing": true,
+    "maximum_ram_size": 6144,
+    "maximum_size": 48640,
+    "protocol": "xplainedmini_updi",
+    "require_upload_port": true,
+    "speed": 115200,
+    "wait_for_upload_port": true
+  },
+  "url": "https://www.arduino.cc/en/Guide/ArduinoUnoWiFiRev2",
+  "vendor": "Arduino"
+}
