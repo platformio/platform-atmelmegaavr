@@ -31,7 +31,7 @@
     "framework-arduino-megaavr": {
       "type": "framework",
       "optional": true,
-      "version": "~1.8.5"
+      "version": "~1.8.6"
     },
     "tool-avrdude-megaavr": {
       "type": "uploader",
