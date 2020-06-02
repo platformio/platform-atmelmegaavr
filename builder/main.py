@@ -64,7 +64,7 @@ env.Replace(
 
     ARFLAGS=["rc"],
 
-    SIZEPROGREGEXP=r"^(?:\.text|\.data|\.bootloader)\s+([0-9]+).*",
+    SIZEPROGREGEXP=r"^(?:\.text|\.data|\.rodata|\.bootloader)\s+([0-9]+).*",
     SIZEDATAREGEXP=r"^(?:\.data|\.bss|\.noinit)\s+([0-9]+).* ",
     SIZEEEPROMREGEXP=r"^(?:\.eeprom)\s+([0-9]+).*",
     SIZECHECKCMD="$SIZETOOL -A -d $SOURCES",
