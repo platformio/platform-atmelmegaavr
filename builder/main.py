@@ -51,6 +51,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
 
 env = DefaultEnvironment()
+env.SConscript("compat.py", exports="env")
 
 env.Replace(
     AR="avr-gcc-ar",
@@ -153,10 +154,13 @@ target_buildprog = env.Alias("buildprog", target_firm, target_firm)
 # Target: Print binary size
 #
 
-target_size = env.Alias(
-    "size", target_elf,
-    env.VerboseAction("$SIZEPRINTCMD", "Calculating size $SOURCE"))
-AlwaysBuild(target_size)
+target_size = env.AddPlatformTarget(
+    "size",
+    target_elf,
+    env.VerboseAction("$SIZEPRINTCMD", "Calculating size $SOURCE"),
+    "Program Size",
+    "Calculate program size",
+)
 
 #
 # Target: Upload by default .hex file
@@ -189,16 +193,18 @@ if "BOOTLOADER_CMD" in env:
 env.Replace(
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS %s' % " ".join(upload_cmd))
 
-AlwaysBuild(env.Alias("upload", target_firm, upload_actions))
+env.AddPlatformTarget("upload", target_firm, upload_actions, "Upload")
 
 #
 # Target: Upload firmware using external programmer
 #
 
-target_program = env.Alias(
-    "program", target_firm,
-    env.VerboseAction("$UPLOADCMD", "Programming $SOURCE"))
-AlwaysBuild(target_program)
+env.AddPlatformTarget(
+    "program",
+    target_firm,
+    env.VerboseAction("$UPLOADCMD", "Programming $SOURCE"),
+    "Upload using Programmer",
+)
 
 #
 # Setup default targets
