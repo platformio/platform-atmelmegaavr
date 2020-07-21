@@ -1,0 +1,31 @@
+{
+  "build": {
+    "core": "MegaCoreX",
+    "extra_flags": "-DARDUINO_AVR_ATMEGA4809",
+    "f_cpu": "16000000L",
+    "mcu": "atmega4809",
+    "variant": "48pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal",
+    "uart": "no_bootloader"
+  },
+  "bootloader":{
+    "led_pin": "A7"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "ATmega4809",
+  "upload": {
+    "maximum_ram_size": 6144,
+    "maximum_size": 49152,
+    "protocol": "jtag2updi",
+    "require_upload_port": true,
+    "speed": 115200,
+    "use_1200bps_touch": true,
+    "wait_for_upload_port": true
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/ATMEGA4809",
+  "vendor": "Microchip"
+}

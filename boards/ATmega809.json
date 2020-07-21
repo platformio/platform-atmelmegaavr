@@ -1,0 +1,31 @@
+{
+  "build": {
+    "core": "MegaCoreX",
+    "extra_flags": "-DARDUINO_AVR_ATMEGA809",
+    "f_cpu": "16000000L",
+    "mcu": "atmega809",
+    "variant": "48pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal",
+    "uart": "no_bootloader"
+  },
+  "bootloader":{
+    "led_pin": "A7"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "ATmega809",
+  "upload": {
+    "maximum_ram_size": 1024,
+    "maximum_size": 8192,
+    "protocol": "jtag2updi",
+    "require_upload_port": true,
+    "speed": 115200,
+    "use_1200bps_touch": true,
+    "wait_for_upload_port": true
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/ATMEGA809",
+  "vendor": "Microchip"
+}
