@@ -5,11 +5,11 @@
   "homepage": "https://www.microchip.com/design-centers/8-bit/avr-mcus/device-selection/atmega4809",
   "license": "Apache-2.0",
   "keywords": [
-      "dev-platform",
-      "Microchip",
-      "megaAVR",
-      "Atmel",
-      "8-bit"
+    "dev-platform",
+    "Microchip",
+    "megaAVR",
+    "Atmel",
+    "8-bit"
   ],
   "engines": {
     "platformio": "<5"
@@ -32,16 +32,19 @@
   "packages": {
     "toolchain-atmelavr": {
       "type": "toolchain",
+      "owner": "platformio",
       "version": "~1.70300.0"
     },
     "framework-arduino-megaavr": {
       "type": "framework",
       "optional": true,
+      "owner": "platformio",
       "version": "~1.8.6"
     },
     "tool-avrdude-megaavr": {
       "type": "uploader",
       "optional": true,
+      "owner": "platformio",
       "version": "~1.60300.0"
     }
   }
