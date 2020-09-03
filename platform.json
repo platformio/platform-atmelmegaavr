@@ -12,17 +12,13 @@
     "8-bit"
   ],
   "engines": {
-    "platformio": "<5"
+    "platformio": "^5"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/platformio/platform-atmelmegaavr.git"
   },
   "version": "1.1.1",
-  "packageRepositories": [
-    "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-    "http://dl.platformio.org/packages/manifest.json"
-  ],
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-megaavr",
