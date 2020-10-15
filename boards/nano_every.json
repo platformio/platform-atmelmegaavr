@@ -14,10 +14,10 @@
     "variant": "nona4809"
   },
   "bootloader": {
-    "SYSCFG0": "0xC9", 
+    "SYSCFG0": "0xC9",
     "file": "atmega4809_uart_bl.hex",
     "fuses_file": "fuses_4809.bin",
-    "BOOTEND": "0x00", 
+    "BOOTEND": "0x00",
     "OSCCFG": "0x01"
   },
   "frameworks": [
@@ -25,6 +25,7 @@
   ],
   "name": "Arduino Nano Every",
   "upload": {
+    "extra_flags": "-e",
     "maximum_ram_size": 6144,
     "maximum_size": 48640,
     "protocol": "jtag2updi",

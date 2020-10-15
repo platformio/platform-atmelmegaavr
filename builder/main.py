@@ -32,10 +32,15 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     if "extra_flags" in upload_options:
         env.Append(UPLOADERFLAGS=upload_options.get("extra_flags"))
 
-    # disable erasing by default
-    env.Append(UPLOADERFLAGS=["-e"])
-
     if upload_options and not upload_options.get("require_upload_port", False):
+        # upload methods via USB
+        if env.subst("$UPLOAD_PROTOCOL") in (
+            "xplainedmini_updi",
+            "xplainedpro_updi",
+            "curiosity_updi",
+            "jtagice3_updi",
+        ):
+            env.Append(UPLOADERFLAGS=["-P", "usb"])
         return
 
     env.AutodetectUploadPort()
@@ -74,8 +79,9 @@ env.Replace(
     UPLOADER="avrdude",
     UPLOADERFLAGS=[
         "-p", "$BOARD_MCU", "-C",
-        join(env.PioPlatform().get_package_dir("tool-avrdude-megaavr") or "",
-             "avrdude.conf"), "-c", "$UPLOAD_PROTOCOL", "-D", "-V"
+        '"%s"' % join(env.PioPlatform().get_package_dir(
+            "tool-avrdude-megaavr") or "", "avrdude.conf"),
+        "-c", "$UPLOAD_PROTOCOL", "-D", "-V"
     ],
 
     PROGSUFFIX=".elf"
@@ -169,9 +175,6 @@ target_size = env.AddPlatformTarget(
 upload_protocol = env.subst("$UPLOAD_PROTOCOL")
 
 if upload_protocol == "custom":
-    upload_actions = [env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")]
-elif upload_protocol == "xplainedmini_updi":
-    env.Append(UPLOADERFLAGS=["-P", "usb", "-e", "-b", "$UPLOAD_SPEED"])
     upload_actions = [env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")]
 else:
     upload_actions = [

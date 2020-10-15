@@ -29,12 +29,15 @@ from SCons.Script import DefaultEnvironment
 
 env = DefaultEnvironment()
 platform = env.PioPlatform()
-
-FRAMEWORK_DIR = platform.get_package_dir("framework-arduino-megaavr")
-assert isdir(FRAMEWORK_DIR)
-
 board = env.BoardConfig()
 build_core = board.get("build.core", "")
+
+FRAMEWORK_DIR = platform.get_package_dir("framework-arduino-megaavr")
+if build_core != "arduino":
+    FRAMEWORK_DIR = platform.get_package_dir(
+        "framework-arduino-megaavr-%s" % build_core.lower())
+
+assert isdir(FRAMEWORK_DIR)
 
 CPPDEFINES = [
     "ARDUINO_ARCH_MEGAAVR",
@@ -66,32 +69,33 @@ env.Append(
     ]
 )
 
-# Bootloader and fuses for uploading purposes
-bootloader_config = board.get("bootloader", {})
-if "BOOTLOADER_CMD" not in env:
-    if env.subst("$BOARD") == "uno_wifi_rev2":
-        bootloader_path = join(
-            FRAMEWORK_DIR, "bootloaders", board.get("bootloader.file", ""))
-        if isfile(bootloader_path):
-            env.Replace(BOOTLOADER_CMD='-Uflash:w:"%s":i' % bootloader_path)
-        else:
-            sys.stderr.write(
-                "Error: Couldn't find bootloader image %s\n" % bootloader_path)
-            env.Exit(1)
+if env.subst("$BOARD") in ("nano_every", "uno_wifi_rev2"):
+    # Bootloader and fuses for uploading purposes
+    bootloader_config = board.get("bootloader", {})
+    if "BOOTLOADER_CMD" not in env:
+        if env.subst("$BOARD") == "uno_wifi_rev2":
+            bootloader_path = join(
+                FRAMEWORK_DIR, "bootloaders", board.get("bootloader.file", ""))
+            if isfile(bootloader_path):
+                env.Replace(BOOTLOADER_CMD='-Uflash:w:"%s":i' % bootloader_path)
+            else:
+                sys.stderr.write(
+                    "Error: Couldn't find bootloader image %s\n" % bootloader_path)
+                env.Exit(1)
 
-if "FUSES_CMD" not in env:
-    for fuse in ("OSCCFG", "SYSCFG0", "BOOTEND"):
-        if not bootloader_config.get(fuse, ""):
-            sys.stderr.write("Error: Missing %s fuse value\n" % fuse)
-            env.Exit(1)
+    if "FUSES_CMD" not in env:
+        for fuse in ("OSCCFG", "SYSCFG0", "BOOTEND"):
+            if not bootloader_config.get(fuse, ""):
+                sys.stderr.write("Error: Missing %s fuse value\n" % fuse)
+                env.Exit(1)
 
-    env.Replace(
-        FUSES_CMD="-Ufuse2:w:%s:m -Ufuse5:w:%s:m -Ufuse8:w:%s:m" % (
-            bootloader_config.get("OSCCFG"),
-            bootloader_config.get("SYSCFG0"),
-            bootloader_config.get("BOOTEND")
+        env.Replace(
+            FUSES_CMD="-Ufuse2:w:%s:m -Ufuse5:w:%s:m -Ufuse8:w:%s:m" % (
+                bootloader_config.get("OSCCFG"),
+                bootloader_config.get("SYSCFG0"),
+                bootloader_config.get("BOOTEND")
+            )
         )
-    )
 
 #
 # Target: Build Core Library
