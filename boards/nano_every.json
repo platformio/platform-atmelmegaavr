@@ -30,8 +30,7 @@
     "protocol": "jtag2updi",
     "require_upload_port": true,
     "speed": 115200,
-    "use_1200bps_touch": true,
-    "wait_for_upload_port": true
+    "use_1200bps_touch": true
   },
   "url": "https://www.arduino.cc/en/Guide/NANOEvery",
   "vendor": "Arduino"
