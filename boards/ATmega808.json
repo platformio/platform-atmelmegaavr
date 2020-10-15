@@ -1,0 +1,31 @@
+{
+  "build": {
+    "core": "MegaCoreX",
+    "extra_flags": "-DARDUINO_AVR_ATMEGA808",
+    "f_cpu": "16000000L",
+    "mcu": "atmega808",
+    "variant": "32pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal",
+    "uart": "no_bootloader"
+  },
+  "bootloader":{
+    "led_pin": "A7"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "ATmega808",
+  "upload": {
+    "maximum_ram_size": 1024,
+    "maximum_size": 8192,
+    "protocol": "jtag2updi",
+    "require_upload_port": true,
+    "speed": 115200,
+    "use_1200bps_touch": true,
+    "wait_for_upload_port": true
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/ATMEGA808",
+  "vendor": "Microchip"
+}
