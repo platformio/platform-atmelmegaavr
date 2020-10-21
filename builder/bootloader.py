@@ -23,9 +23,11 @@ board = env.BoardConfig()
 platform = env.PioPlatform()
 core = board.get("build.core", "")
 
+AVRDUDE_PATH = platform.get_package_dir("tool-avrdude-megaavr") or ""
+
 common_cmd = [
     "avrdude", "-p", "$BOARD_MCU", "-e", "-C",
-    '"%s"' % os.path.join(platform.get_package_dir("tool-avrdude-megaavr"), "avrdude.conf"),
+    '"%s"' % os.path.join(AVRDUDE_PATH, "avrdude.conf"),
     "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
 ]
 
@@ -79,7 +81,7 @@ lock_fuse = bootloader_fuses.get("LOCKBIT", "")
 
 fuses_cmd = [
     "avrdude", "-p", "$BOARD_MCU", "-C",
-    '"%s"' % os.path.join(platform.get_package_dir("tool-avrdude-megaavr"), "avrdude.conf"),
+    '"%s"' % os.path.join(AVRDUDE_PATH, "avrdude.conf"),
     "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
 ]
 

@@ -42,7 +42,7 @@ lock_fuse = board_fuses.get("LOCKBIT", "")
 fuses_cmd = [
     "avrdude", "-p", "$BOARD_MCU", "-C",
     '"%s"' % os.path.join(platform.get_package_dir(
-        "tool-avrdude-megaavr"), "avrdude.conf"),
+        "tool-avrdude-megaavr") or "", "avrdude.conf"),
     "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
 ]
 
