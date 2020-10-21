@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 from os.path import join
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, AlwaysBuild,
@@ -34,13 +35,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
     if upload_options and not upload_options.get("require_upload_port", False):
         # upload methods via USB
-        if env.subst("$UPLOAD_PROTOCOL") in (
-            "xplainedmini_updi",
-            "xplainedpro_updi",
-            "curiosity_updi",
-            "jtagice3_updi",
-        ):
-            env.Append(UPLOADERFLAGS=["-P", "usb"])
+        env.Append(UPLOADERFLAGS=["-P", "usb"])
         return
 
     env.AutodetectUploadPort()
@@ -81,8 +76,9 @@ env.Replace(
         "-p", "$BOARD_MCU", "-C",
         '"%s"' % join(env.PioPlatform().get_package_dir(
             "tool-avrdude-megaavr") or "", "avrdude.conf"),
-        "-c", "$UPLOAD_PROTOCOL", "-D", "-V"
+        "-c", "$UPLOAD_PROTOCOL"
     ],
+    UPLOADCMD="$UPLOADER $UPLOADERFLAGS -U flash:w:$SOURCES:i",
 
     PROGSUFFIX=".elf"
 )
@@ -169,6 +165,24 @@ target_size = env.AddPlatformTarget(
 )
 
 #
+# Target: Setup fuses
+#
+
+fuses_action = None
+if "fuses" in COMMAND_LINE_TARGETS:
+    fuses_action = env.SConscript("fuses.py", exports="env")
+env.AddPlatformTarget("fuses", None, fuses_action, "Set Fuses")
+
+#
+# Target: Upload bootloader
+#
+
+bootloader_actions = None
+if "bootloader" in COMMAND_LINE_TARGETS:
+    bootloader_actions = env.SConscript("bootloader.py", exports="env")
+env.AddPlatformTarget("bootloader", None, bootloader_actions, "Burn Bootloader")
+
+#
 # Target: Upload by default .hex file
 #
 
@@ -182,32 +196,30 @@ else:
         env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")
     ]
 
+    board = env.subst("$BOARD")
+    if board == "uno_wifi_rev2":
+        # uno_wifi_rev2 requires bootloader to be uploaded in any case
+        upload_actions = env.SConscript("bootloader.py", exports="env") + upload_actions
+    elif board == "nano_every":
+        # Program fuses after programming flash
+        upload_actions.append(env.SConscript("fuses.py", exports="env"))
+
 if int(ARGUMENTS.get("PIOVERBOSE", 0)):
     env.Prepend(UPLOADERFLAGS=["-v"])
-
-upload_cmd = ["-U", "flash:w:$SOURCES:i"]
-
-if "FUSES_CMD" in env:
-    upload_cmd.append(env.get("FUSES_CMD"))
-
-if "BOOTLOADER_CMD" in env:
-    upload_cmd.append(env.get("BOOTLOADER_CMD"))
-
-env.Replace(
-    UPLOADCMD='$UPLOADER $UPLOADERFLAGS %s' % " ".join(upload_cmd))
 
 env.AddPlatformTarget("upload", target_firm, upload_actions, "Upload")
 
 #
-# Target: Upload firmware using external programmer
+# Deprecated target: Upload firmware using external programmer
 #
 
-env.AddPlatformTarget(
-    "program",
-    target_firm,
-    env.VerboseAction("$UPLOADCMD", "Programming $SOURCE"),
-    "Upload using Programmer",
-)
+if "program" in COMMAND_LINE_TARGETS:
+    sys.stderr.write(
+        "Error: `program` target is deprecated. To use a programmer for uploading "
+        "specify custom `upload_command`.\n"
+        "More details: https://docs.platformio.org/en/latest/platforms/"
+        "atmelavr.html#upload-using-programmer\n")
+    env.Exit(1)
 
 #
 # Setup default targets

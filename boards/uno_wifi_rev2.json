@@ -26,7 +26,7 @@
   ],
   "name": "Arduino Uno WiFi Rev2",
   "upload": {
-    "extra_flags": "-e",
+    "extra_flags": ["-V", "-e", "-D"],
     "maximum_ram_size": 6144,
     "maximum_size": 48640,
     "protocol": "xplainedmini_updi",
