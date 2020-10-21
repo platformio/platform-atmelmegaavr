@@ -37,7 +37,7 @@ class AtmelmegaavrPlatform(PlatformBase):
                 self.packages["tool-avrdude-megaavr"]["version"] = "~2.60300.0"
 
         if any(t in targets for t in ("fuses", "bootloader")):
-            self.packages["tool-avrdude"]["optional"] = False
+            self.packages["tool-avrdude-megaavr"]["optional"] = False
 
         return super(AtmelmegaavrPlatform, self).configure_default_packages(
             variables, targets)
