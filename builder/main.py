@@ -197,7 +197,7 @@ else:
     ]
 
     board = env.subst("$BOARD")
-    if board == "uno_wifi_rev2":
+    if board == "uno_wifi_rev2" and "arduino" in env.subst("$PIOFRAMEWORK"):
         # uno_wifi_rev2 requires bootloader to be uploaded in any case
         upload_actions = env.SConscript("bootloader.py", exports="env") + upload_actions
     elif board == "nano_every":
