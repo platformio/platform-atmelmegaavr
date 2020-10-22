@@ -22,8 +22,7 @@ kinds of creative coding, interactive objects, spaces or physical experiences.
 http://arduino.cc/en/Reference/HomePage
 """
 
-import sys
-from os.path import isdir, isfile, join
+from os.path import isdir, join
 
 from SCons.Script import DefaultEnvironment
 
@@ -85,14 +84,14 @@ if "build.variant" in board:
             join(variants_dir, board.get("build.variant"))
         ]
     )
-    env.BuildSources(
+    libs.append(env.BuildLibrary(
         join("$BUILD_DIR", "FrameworkArduinoVariant"),
         join(variants_dir, board.get("build.variant"))
-    )
+    ))
 
-env.BuildSources(
+libs.append(env.BuildLibrary(
     join("$BUILD_DIR", "FrameworkArduino"),
     join(FRAMEWORK_DIR, "cores", build_core)
-)
+))
 
 env.Prepend(LIBS=libs)
