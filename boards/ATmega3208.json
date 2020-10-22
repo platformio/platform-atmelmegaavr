@@ -7,11 +7,7 @@
     "variant": "32pin-standard"
   },
   "hardware": {
-    "oscillator": "internal",
-    "uart": "no_bootloader"
-  },
-  "bootloader":{
-    "led_pin": "A7"
+    "oscillator": "internal"
   },
   "frameworks": [
     "arduino"

@@ -197,12 +197,14 @@ else:
     ]
 
     board = env.subst("$BOARD")
-    if board == "uno_wifi_rev2" and "arduino" in env.subst("$PIOFRAMEWORK"):
-        # uno_wifi_rev2 requires bootloader to be uploaded in any case
-        upload_actions = env.SConscript("bootloader.py", exports="env") + upload_actions
-    elif board == "nano_every":
-        # Program fuses after programming flash
-        upload_actions.append(env.SConscript("fuses.py", exports="env"))
+    if "upload" in COMMAND_LINE_TARGETS and "arduino" in env.subst("$PIOFRAMEWORK"):
+        if board == "uno_wifi_rev2":
+            # uno_wifi_rev2 requires bootloader to be uploaded in any case
+            upload_actions = env.SConscript(
+                "bootloader.py", exports="env") + upload_actions
+        elif board == "nano_every":
+            # Program fuses after programming flash
+            upload_actions.append(env.SConscript("fuses.py", exports="env"))
 
 if int(ARGUMENTS.get("PIOVERBOSE", 0)):
     env.Prepend(UPLOADERFLAGS=["-v"])
