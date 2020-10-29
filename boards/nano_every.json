@@ -27,9 +27,7 @@
     "maximum_ram_size": 6144,
     "maximum_size": 48640,
     "protocol": "jtag2updi",
-    "require_upload_port": true,
-    "speed": 115200,
-    "use_1200bps_touch": true
+    "speed": 115200
   },
   "url": "https://www.arduino.cc/en/Guide/NANOEvery",
   "vendor": "Arduino"

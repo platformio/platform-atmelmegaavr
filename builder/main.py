@@ -196,6 +196,12 @@ else:
         env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")
     ]
 
+    # jtag2updi seems to be the only protocol that requires serial port
+    if upload_protocol == "jtag2updi":
+        upload_options = env.BoardConfig().get("upload", {})
+        for opt in ("require_upload_port", "use_1200bps_touch", "wait_for_upload_port"):
+            upload_options[opt] = True
+
     board = env.subst("$BOARD")
     if "upload" in COMMAND_LINE_TARGETS and "arduino" in env.subst("$PIOFRAMEWORK"):
         if board == "uno_wifi_rev2":
