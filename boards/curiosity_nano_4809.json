@@ -1,0 +1,23 @@
+{
+  "build": {
+    "core": "MegaCoreX",
+    "extra_flags": "-DARDUINO_AVR_ATMEGA4809",
+    "f_cpu": "16000000L",
+    "mcu": "atmega4809",
+    "variant": "48pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "Curiosity Nano ATmega4809",
+  "upload": {
+    "maximum_ram_size": 6144,
+    "maximum_size": 49152,
+    "protocol": "curiosity_updi"
+  },
+  "url": "https://www.microchip.com/developmenttools/ProductDetails/DM320115",
+  "vendor": "Microchip"
+}

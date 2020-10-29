@@ -1,0 +1,23 @@
+{
+  "build": {
+    "core": "MegaCoreX",
+    "extra_flags": "-DARDUINO_AVR_ATMEGA4808",
+    "f_cpu": "16000000L",
+    "mcu": "atmega4808",
+    "variant": "32pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "AVR-IoT WG Development Board",
+  "upload": {
+    "maximum_ram_size": 6144,
+    "maximum_size": 49152,
+    "protocol": "curiosity_updi"
+  },
+  "url": "https://www.microchip.com/developmenttools/ProductDetails/AC164160",
+  "vendor": "Microchip"
+}
