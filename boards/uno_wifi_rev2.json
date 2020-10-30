@@ -17,22 +17,20 @@
   "bootloader": {
     "file": "atmega4809_uart_bl.hex",
     "fuses_file": "fuses_4809.bin",
-    "BOOTEND": "0x02", 
-    "SYSCFG0": "0xC9", 
-    "OSCCFG": "0x01"
+    "bootend": "0x02",
+    "syscfg0": "0xc9",
+    "osccfg": "0x01"
   },
   "frameworks": [
     "arduino"
   ],
   "name": "Arduino Uno WiFi Rev2",
   "upload": {
-    "disable_flushing": true,
+    "extra_flags": ["-V", "-e", "-D"],
     "maximum_ram_size": 6144,
     "maximum_size": 48640,
     "protocol": "xplainedmini_updi",
-    "require_upload_port": true,
-    "speed": 115200,
-    "wait_for_upload_port": true
+    "speed": 115200
   },
   "url": "https://www.arduino.cc/en/Guide/ArduinoUnoWiFiRev2",
   "vendor": "Arduino"

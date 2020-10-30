@@ -13,25 +13,21 @@
     "usb_product": "Arduino Nano Every",
     "variant": "nona4809"
   },
-  "bootloader": {
-    "SYSCFG0": "0xC9", 
-    "file": "atmega4809_uart_bl.hex",
-    "fuses_file": "fuses_4809.bin",
-    "BOOTEND": "0x00", 
-    "OSCCFG": "0x01"
+  "fuses": {
+    "syscfg0": "0xc9",
+    "bootend": "0x00",
+    "osccfg": "0x01"
   },
   "frameworks": [
     "arduino"
   ],
   "name": "Arduino Nano Every",
   "upload": {
+    "extra_flags": ["-V", "-e", "-D"],
     "maximum_ram_size": 6144,
     "maximum_size": 48640,
     "protocol": "jtag2updi",
-    "require_upload_port": true,
-    "speed": 115200,
-    "use_1200bps_touch": true,
-    "wait_for_upload_port": true
+    "speed": 115200
   },
   "url": "https://www.arduino.cc/en/Guide/NANOEvery",
   "vendor": "Arduino"

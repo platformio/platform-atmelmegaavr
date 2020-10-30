@@ -1,0 +1,24 @@
+{
+  "build": {
+    "core": "MegaCoreX",
+    "extra_flags": "-DARDUINO_AVR_ATMEGA3208",
+    "f_cpu": "16000000L",
+    "mcu": "atmega3208",
+    "variant": "32pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "ATmega3208",
+  "upload": {
+    "maximum_ram_size": 4096,
+    "maximum_size": 32768,
+    "protocol": "jtag2updi",
+    "speed": 115200
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/ATMEGA3208",
+  "vendor": "Microchip"
+}

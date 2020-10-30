@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 from os.path import join
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, AlwaysBuild,
@@ -32,10 +33,9 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     if "extra_flags" in upload_options:
         env.Append(UPLOADERFLAGS=upload_options.get("extra_flags"))
 
-    # disable erasing by default
-    env.Append(UPLOADERFLAGS=["-e"])
-
     if upload_options and not upload_options.get("require_upload_port", False):
+        # upload methods via USB
+        env.Append(UPLOADERFLAGS=["-P", "usb"])
         return
 
     env.AutodetectUploadPort()
@@ -74,9 +74,11 @@ env.Replace(
     UPLOADER="avrdude",
     UPLOADERFLAGS=[
         "-p", "$BOARD_MCU", "-C",
-        join(env.PioPlatform().get_package_dir("tool-avrdude-megaavr") or "",
-             "avrdude.conf"), "-c", "$UPLOAD_PROTOCOL", "-D", "-V"
+        '"%s"' % join(env.PioPlatform().get_package_dir(
+            "tool-avrdude-megaavr") or "", "avrdude.conf"),
+        "-c", "$UPLOAD_PROTOCOL"
     ],
+    UPLOADCMD="$UPLOADER $UPLOADERFLAGS -U flash:w:$SOURCES:i",
 
     PROGSUFFIX=".elf"
 )
@@ -163,6 +165,24 @@ target_size = env.AddPlatformTarget(
 )
 
 #
+# Target: Setup fuses
+#
+
+fuses_action = None
+if "fuses" in COMMAND_LINE_TARGETS:
+    fuses_action = env.SConscript("fuses.py", exports="env")
+env.AddPlatformTarget("fuses", None, fuses_action, "Set Fuses")
+
+#
+# Target: Upload bootloader
+#
+
+bootloader_actions = None
+if "bootloader" in COMMAND_LINE_TARGETS:
+    bootloader_actions = env.SConscript("bootloader.py", exports="env")
+env.AddPlatformTarget("bootloader", None, bootloader_actions, "Burn Bootloader")
+
+#
 # Target: Upload by default .hex file
 #
 
@@ -170,41 +190,44 @@ upload_protocol = env.subst("$UPLOAD_PROTOCOL")
 
 if upload_protocol == "custom":
     upload_actions = [env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")]
-elif upload_protocol == "xplainedmini_updi":
-    env.Append(UPLOADERFLAGS=["-P", "usb", "-e", "-b", "$UPLOAD_SPEED"])
-    upload_actions = [env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")]
 else:
     upload_actions = [
         env.VerboseAction(BeforeUpload, "Looking for upload port..."),
         env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")
     ]
 
+    # jtag2updi seems to be the only protocol that requires serial port
+    if upload_protocol == "jtag2updi":
+        upload_options = env.BoardConfig().get("upload", {})
+        for opt in ("require_upload_port", "use_1200bps_touch", "wait_for_upload_port"):
+            upload_options[opt] = True
+
+    board = env.subst("$BOARD")
+    if "upload" in COMMAND_LINE_TARGETS and "arduino" in env.subst("$PIOFRAMEWORK"):
+        if board == "uno_wifi_rev2":
+            # uno_wifi_rev2 requires bootloader to be uploaded in any case
+            upload_actions += env.SConscript("bootloader.py", exports="env")
+
+        elif board == "nano_every":
+            # Program fuses after programming flash
+            upload_actions.append(env.SConscript("fuses.py", exports="env"))
+
 if int(ARGUMENTS.get("PIOVERBOSE", 0)):
     env.Prepend(UPLOADERFLAGS=["-v"])
-
-upload_cmd = ["-U", "flash:w:$SOURCES:i"]
-
-if "FUSES_CMD" in env:
-    upload_cmd.append(env.get("FUSES_CMD"))
-
-if "BOOTLOADER_CMD" in env:
-    upload_cmd.append(env.get("BOOTLOADER_CMD"))
-
-env.Replace(
-    UPLOADCMD='$UPLOADER $UPLOADERFLAGS %s' % " ".join(upload_cmd))
 
 env.AddPlatformTarget("upload", target_firm, upload_actions, "Upload")
 
 #
-# Target: Upload firmware using external programmer
+# Deprecated target: Upload firmware using external programmer
 #
 
-env.AddPlatformTarget(
-    "program",
-    target_firm,
-    env.VerboseAction("$UPLOADCMD", "Programming $SOURCE"),
-    "Upload using Programmer",
-)
+if "program" in COMMAND_LINE_TARGETS:
+    sys.stderr.write(
+        "Error: `program` target is deprecated. To use a programmer for uploading "
+        "specify custom `upload_command`.\n"
+        "More details: https://docs.platformio.org/en/latest/platforms/"
+        "atmelavr.html#upload-using-programmer\n")
+    env.Exit(1)
 
 #
 # Setup default targets
