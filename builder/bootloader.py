@@ -15,7 +15,7 @@
 import sys
 import os
 
-from SCons.Script import ARGUMENTS, Import, Return
+from SCons.Script import Import, Return
 
 Import("env")
 
@@ -40,14 +40,6 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
     return bootloader_path
 
 
-AVRDUDE_PATH = platform.get_package_dir("tool-avrdude-megaavr") or ""
-
-common_cmd = [
-    "avrdude", "-p", "$BOARD_MCU", "-e", "-C",
-    '"%s"' % os.path.join(AVRDUDE_PATH, "avrdude.conf"),
-    "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
-]
-
 framework_dir = ""
 if env.get("PIOFRAMEWORK", []):
     framework_dir = platform.get_package_dir(platform.frameworks[env.get(
@@ -62,9 +54,8 @@ if core == "MegaCoreX":
     if not os.path.isfile(bootloader_path):
         bootloader_path = get_suitable_optiboot_binary(framework_dir, board)
 else:
-    if not isfile(bootloader_path):
-        bootloader_path = join(
-            framework_dir, "bootloaders", bootloader_path)
+    if not os.path.isfile(bootloader_path):
+        bootloader_path = os.path.join(framework_dir, "bootloaders", bootloader_path)
 
     if not board.get("bootloader", {}):
         sys.stderr.write("Error: missing bootloader configuration!\n")
@@ -73,61 +64,46 @@ else:
 if not os.path.isfile(bootloader_path):
     bootloader_path = os.path.join(framework_dir, "bootloaders", bootloader_path)
 
-if not os.path.isfile(bootloader_path):
+if not os.path.isfile(bootloader_path) and "BOOTFLAGS" not in env:
     sys.stderr.write("Error: Couldn't find bootloader image\n")
     env.Exit(1)
 
-bootloader_flags = ['-Uflash:w:"%s":i' % bootloader_path]
+env.Append(
+    BOOTUPLOADER="avrdude",
+    BOOTUPLOADERFLAGS=[
+        "-p",
+        "$BOARD_MCU",
+        "-C",
+        '"%s"'
+        % os.path.join(env.PioPlatform().get_package_dir(
+            "tool-avrdude-megaavr") or "", "avrdude.conf"),
+    ],
+    BOOTFLAGS=['-Uflash:w:"%s":i' % bootloader_path],
+    UPLOADBOOTCMD="$BOOTUPLOADER $BOOTUPLOADERFLAGS $UPLOAD_FLAGS $BOOTFLAGS",
+)
 
-#
-# Fuses processing
-#
-
-fuses_action = None
-if core == "MegaCoreX":
-    fuses_action = env.SConscript("fuses.py", exports="env")
+if not env.BoardConfig().get("upload", {}).get("require_upload_port", False):
+    # upload methods via USB
+    env.Append(BOOTUPLOADERFLAGS=["-P", "usb"])
 else:
-    bootloader_fuses = board.get("bootloader", {})
-    if not bootloader_fuses:
-        sys.stderr.write("Error: missing bootloader configuration!\n")
-        env.Exit(1)
+    env.AutodetectUploadPort()
+    env.Append(FUSESUPLOADERFLAGS=["-P", '"$UPLOAD_PORT"'])
 
-    # Note: the index represents the fuse number
-    fuses = (
-        bootloader_fuses.get("WDTCFG", ""),
-        bootloader_fuses.get("BODCFG", ""),
-        bootloader_fuses.get("OSCCFG", ""),
-        "",  # Reserved
-        bootloader_fuses.get("TCD0CFG", ""),
-        bootloader_fuses.get("SYSCFG0", ""),
-        bootloader_fuses.get("SYSCFG1", ""),
-        bootloader_fuses.get("APPEND", ""),
-        bootloader_fuses.get("BOOTEND", ""),
+if env.subst("$UPLOAD_PROTOCOL") != "custom":
+    env.Append(BOOTUPLOADERFLAGS=["-c", "$UPLOAD_PROTOCOL"])
+else:
+    print(
+        "Warning: The `custom` upload protocol is used! The upload and fuse flags may "
+        "conflict!\nMore information: "
+        "https://docs.platformio.org/en/latest/platforms/atmelavr.html"
+        "#overriding-default-bootloader-command\n"
     )
 
-    lock_fuse = bootloader_fuses.get("LOCKBIT", "")
-
-    fuses_cmd = [
-        "avrdude", "-p", "$BOARD_MCU", "-C",
-        '"%s"' % os.path.join(AVRDUDE_PATH, "avrdude.conf"),
-        "-c", "$UPLOAD_PROTOCOL", "$UPLOAD_FLAGS"
-    ]
-
-    if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-        fuses_cmd.append("-v")
-
-    for idx, value in enumerate(fuses):
-        if value:
-            fuses_cmd.append("-Ufuse%d:w:%s:m" % (idx, value))
-
-    if lock_fuse:
-        fuses_cmd.append("-Ulock:w:%s:m" % lock_fuse)
-
-    fuses_action = env.VerboseAction(" ".join(fuses_cmd), "Setting fuses")
+fuses_action = env.SConscript("fuses.py", exports="env")
 
 bootloader_actions = [
     fuses_action,
-    env.VerboseAction(" ".join(common_cmd + bootloader_flags), "Uploading bootloader")
+    env.VerboseAction("$UPLOADBOOTCMD", "Uploading bootloader"),
 ]
 
 Return("bootloader_actions")

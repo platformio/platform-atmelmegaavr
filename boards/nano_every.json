@@ -14,9 +14,9 @@
     "variant": "nona4809"
   },
   "fuses": {
-    "SYSCFG0": "0xC9",
-    "BOOTEND": "0x00",
-    "OSCCFG": "0x01"
+    "syscfg0": "0xc9",
+    "bootend": "0x00",
+    "osccfg": "0x01"
   },
   "frameworks": [
     "arduino"
