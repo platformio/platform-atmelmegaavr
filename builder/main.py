@@ -201,6 +201,12 @@ else:
         upload_options = env.BoardConfig().get("upload", {})
         for opt in ("require_upload_port", "use_1200bps_touch", "wait_for_upload_port"):
             upload_options[opt] = True
+    elif upload_protocol == "arduino":
+        upload_options = env.BoardConfig().get("upload", {})
+        upload_options["require_upload_port"] = True
+        upload_options["use_1200bps_touch"] = False
+        upload_options["wait_for_upload_port"] = False
+        env.Append(UPLOADERFLAGS=["-D"])
 
     board = env.subst("$BOARD")
     if "upload" in COMMAND_LINE_TARGETS and "arduino" in env.subst("$PIOFRAMEWORK"):
