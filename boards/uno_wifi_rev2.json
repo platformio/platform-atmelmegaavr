@@ -18,7 +18,7 @@
     "file": "atmega4809_uart_bl.hex",
     "fuses_file": "fuses_4809.bin",
     "bootend": "0x02",
-    "syscfg0": "0xc9",
+    "syscfg0": "0xC9",
     "osccfg": "0x01"
   },
   "frameworks": [

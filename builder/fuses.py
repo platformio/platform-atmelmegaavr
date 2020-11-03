@@ -103,15 +103,15 @@ def calculate_megacorex_fuses(board_config, predefined_fuses):
     print("------------------------")
 
     return (
-        predefined_fuses[0] or hex(get_wdtcfg_fuse()),
-        predefined_fuses[1] or hex(get_bodcfg_fuse(bod)),
-        predefined_fuses[2] or hex(get_osccfg_fuse(f_cpu, oscillator)),
+        predefined_fuses[0] or "0x%.2X" % get_wdtcfg_fuse(),
+        predefined_fuses[1] or "0x%.2X" % get_bodcfg_fuse(bod),
+        predefined_fuses[2] or "0x%.2X" % get_osccfg_fuse(f_cpu, oscillator),
         "",  # reserved
-        predefined_fuses[4] or hex(get_tcd0cfg_fuse()),
-        predefined_fuses[5] or hex(get_syscfg0_fuse(eesave, rstpin, uart)),
-        predefined_fuses[6] or hex(get_syscfg1_fuse()),
-        predefined_fuses[7] or hex(get_append_fuse()),
-        predefined_fuses[8] or hex(get_bootend_fuse(uart)),
+        predefined_fuses[4] or "0x%.2X" % get_tcd0cfg_fuse(),
+        predefined_fuses[5] or "0x%.2X" % get_syscfg0_fuse(eesave, rstpin, uart),
+        predefined_fuses[6] or "0x%.2X" % get_syscfg1_fuse(),
+        predefined_fuses[7] or "0x%.2X" % get_append_fuse(),
+        predefined_fuses[8] or "0x%.2X" % get_bootend_fuse(uart),
     )
 
 

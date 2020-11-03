@@ -14,7 +14,7 @@
     "variant": "nona4809"
   },
   "fuses": {
-    "syscfg0": "0xc9",
+    "syscfg0": "0xC9",
     "bootend": "0x00",
     "osccfg": "0x01"
   },
