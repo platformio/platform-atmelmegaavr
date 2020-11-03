@@ -25,12 +25,16 @@ core = board.get("build.core", "")
 
 
 def get_suitable_optiboot_binary(framework_dir, board_config):
-    uart = board_config.get("hardware.uart", "uart0").upper()
+    uart = board_config.get("hardware.uart", "no_bootloader").lower()
+    if uart == "no_bootloader":
+        return ""
+    if not uart.endswith(("_alt", "_def")):
+        uart = uart + "_def"
+
     bootloader_led = board_config.get("bootloader.led_pin", "A7").upper()
     bootloader_speed = board_config.get("bootloader.speed", env.subst("$UPLOAD_SPEED"))
-    bootloader_pins = board_config.get("bootloader.pins", "DEF").upper()
-    bootloader_file = "Optiboot_mega0_%s_%s_%s_%s.hex" % (
-        uart, bootloader_pins, bootloader_speed, bootloader_led)
+    bootloader_file = "Optiboot_mega0_%s_%s_%s.hex" % (
+        uart.upper(), bootloader_speed, bootloader_led)
 
     bootloader_path = os.path.join(
         framework_dir, "bootloaders", "optiboot", "bootloaders", "mega0",
@@ -52,6 +56,9 @@ if env.get("PIOFRAMEWORK", []):
 bootloader_path = board.get("bootloader.file", "")
 if core == "MegaCoreX":
     if not os.path.isfile(bootloader_path):
+        if board.get("hardware.uart", "no_bootloader").lower() == "no_bootloader":
+            sys.stderr.write("Error: `no bootloader` selected in board config!\n")
+            env.Exit(1)
         bootloader_path = get_suitable_optiboot_binary(framework_dir, board)
 else:
     if not os.path.isfile(bootloader_path):
@@ -65,7 +72,7 @@ if not os.path.isfile(bootloader_path):
     bootloader_path = os.path.join(framework_dir, "bootloaders", bootloader_path)
 
 if not os.path.isfile(bootloader_path) and "BOOTFLAGS" not in env:
-    sys.stderr.write("Error: Couldn't find bootloader image\n")
+    sys.stderr.write("Error: Couldn't find bootloader image %s\n" % bootloader_path)
     env.Exit(1)
 
 env.Append(

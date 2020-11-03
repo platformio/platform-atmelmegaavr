@@ -69,6 +69,13 @@ env.Append(
 )
 
 #
+# Select oscillator using a special macro
+#
+
+if board.get("hardware", {}).get("oscillator", "internal") == "external":
+    env.Append(CPPDEFINES=["USE_EXTERNAL_OSCILLATOR"])
+
+#
 # Target: Build Core Library
 #
 
