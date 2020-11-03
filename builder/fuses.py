@@ -66,6 +66,8 @@ def get_lockbit_fuse():
 
 
 def print_fuses_info(fuse_values, fuse_names, lock_fuse):
+    if "upload" in COMMAND_LINE_TARGETS:
+        return
     print("\nSelected fuses:")
     print("------------------------")
     for idx, value in enumerate(fuse_values):
