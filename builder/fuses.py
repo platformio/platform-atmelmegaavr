@@ -149,7 +149,6 @@ if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX":
     env.Exit(1)
 
 fuse_values = [board_fuses.get(fname, "") for fname in fuse_names]
-print(811, fuse_values)
 lock_fuse = board_fuses.get("lockbit", hex(get_lockbit_fuse()))
 if core == "MegaCoreX":
     fuse_values = calculate_megacorex_fuses(board, fuse_values)
