@@ -91,10 +91,10 @@ if "build.variant" in board:
             join(variants_dir, board.get("build.variant"))
         ]
     )
-    libs.append(env.BuildLibrary(
+    env.BuildSources(
         join("$BUILD_DIR", "FrameworkArduinoVariant"),
         join(variants_dir, board.get("build.variant"))
-    ))
+    )
 
 libs.append(env.BuildLibrary(
     join("$BUILD_DIR", "FrameworkArduino"),
