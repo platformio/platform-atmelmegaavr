@@ -72,7 +72,7 @@ def print_fuses_info(fuse_values, fuse_names, lock_fuse):
     print("------------------------")
     for idx, value in enumerate(fuse_values):
         if value:
-            print("[fuse%d / %s = %s]" % (idx, fuse_names[idx].upper(), value))
+            print("[fuse%d / %-7s = %s]" % (idx, fuse_names[idx].upper(), value))
     if lock_fuse:
         print("[lfuse / LOCKBIT = %s]" % lock_fuse)
     print("------------------------\n")
