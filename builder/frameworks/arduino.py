@@ -69,6 +69,13 @@ env.Append(
 )
 
 #
+# Select oscillator using a special macro
+#
+
+if board.get("hardware", {}).get("oscillator", "internal") == "external":
+    env.Append(CPPDEFINES=["USE_EXTERNAL_OSCILLATOR"])
+
+#
 # Target: Build Core Library
 #
 
@@ -84,10 +91,10 @@ if "build.variant" in board:
             join(variants_dir, board.get("build.variant"))
         ]
     )
-    libs.append(env.BuildLibrary(
+    env.BuildSources(
         join("$BUILD_DIR", "FrameworkArduinoVariant"),
         join(variants_dir, board.get("build.variant"))
-    ))
+    )
 
 libs.append(env.BuildLibrary(
     join("$BUILD_DIR", "FrameworkArduino"),

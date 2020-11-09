@@ -54,8 +54,12 @@ env.Append(
         "-flto",
         "-mmcu=$BOARD_MCU",
         "-Wl,--gc-sections",
-        "-Wl,--section-start=.text=%s" % env.BoardConfig().get(
-            "build.text_section_start", "0x0"),
+        "-Wl,--section-start=.text=%s"
+        % (
+            "0x200"
+            if env.subst("$UPLOAD_PROTOCOL") == "arduino"
+            else env.BoardConfig().get("build.text_section_start", "0x0")
+        ),
         "-fuse-linker-plugin"
     ],
 
