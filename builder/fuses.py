@@ -34,16 +34,26 @@ def get_tcd0cfg_fuse():
     return 0x00
 
 
-def get_syscfg0_fuse(eesave, rstpin, uart):
+def get_syscfg0_fuse(eesave, pin, uart):
     eesave_bit = 1 if eesave == "yes" else 0
-    if rstpin == "gpio":
-        if uart == "no_bootloader":
-            rstpin_bit = 0
+    if core == "MegaCoreX":
+        if pin == "gpio":
+            if uart == "no_bootloader":
+                rstpin_bit = 0
+            else:
+                rstpin_bit = 1
         else:
             rstpin_bit = 1
-    else:
-        rstpin_bit = 1
-    return 0xC0 | rstpin_bit << 3 | eesave_bit
+        return 0xC0 | rstpin_bit << 3 | eesave_bit
+
+    elif core == "megaTinyCore":
+        if pin == "gpio":
+            updipin_bits = 0x0
+        elif pin == "updi":
+            updipin_bits = 0x1
+        else:
+            rstpin_bit = 0x2
+        return 0xC0 | updipin_bits << 1 | eesave_bit
 
 
 def get_syscfg1_fuse():
@@ -78,19 +88,22 @@ def print_fuses_info(fuse_values, fuse_names, lock_fuse):
     print("------------------------\n")
 
 
-def calculate_megacorex_fuses(board_config, predefined_fuses):
-    megacorex_fuses = []
+def calculate_fuses(board_config, predefined_fuses):
+    megaavr_fuses = []
     f_cpu = board_config.get("build.f_cpu", "16000000L").upper()
     oscillator = board_config.get("hardware.oscillator", "internal").lower()
     bod = board_config.get("hardware.bod", "2.6v").lower()
     uart = board_config.get("hardware.uart", "no_bootloader").lower()
     eesave = board_config.get("hardware.eesave", "yes").lower()
-    rstpin = board_config.get("hardware.rstpin", "reset").lower()
+    if core == "MegaCoreX":
+        pin = board_config.get("hardware.rstpin", "reset").lower()
+        # Guard that prevents the user from turning the reset pin
+        # into a GPIO while using a bootloader
+        if uart != "no_bootloader":
+            pin = "reset"
 
-    # Guard that prevents the user from turning the reset pin
-    # into a GPIO while using a bootloader
-    if uart != "no_bootloader":
-        rstpin = "reset"
+    elif core == "megaTinyCore":
+        pin = board_config.get("hardware.updipin", "updi").lower()
 
     print("\nTARGET CONFIGURATION:")
     print("------------------------")
@@ -99,7 +112,10 @@ def calculate_megacorex_fuses(board_config, predefined_fuses):
     print("Oscillator = %s" % oscillator)
     print("BOD level = %s" % bod)
     print("Save EEPROM = %s" % eesave)
-    print("Reset pin mode = %s" % rstpin)
+    if core == "MegaCoreX":
+        print("Reset pin mode = %s" % pin)
+    elif core == "megaTinyCore":
+        print("UPDI pin mode = %s" % pin)
     print("------------------------")
 
     return (
@@ -108,7 +124,7 @@ def calculate_megacorex_fuses(board_config, predefined_fuses):
         predefined_fuses[2] or "0x%.2X" % get_osccfg_fuse(f_cpu, oscillator),
         "",  # reserved
         predefined_fuses[4] or "0x%.2X" % get_tcd0cfg_fuse(),
-        predefined_fuses[5] or "0x%.2X" % get_syscfg0_fuse(eesave, rstpin, uart),
+        predefined_fuses[5] or "0x%.2X" % get_syscfg0_fuse(eesave, pin, uart),
         predefined_fuses[6] or "0x%.2X" % get_syscfg1_fuse(),
         predefined_fuses[7] or "0x%.2X" % get_append_fuse(),
         predefined_fuses[8] or "0x%.2X" % get_bootend_fuse(uart),
@@ -143,7 +159,7 @@ fuse_names = (
 )
 
 board_fuses = board.get(fuses_section, {})
-if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX":
+if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX" and core != "megaTinyCore":
     sys.stderr.write(
         "Error: Dynamic fuses generation for %s / %s is not supported. "
         "Please specify fuses in platformio.ini\n" % (core, env.subst("$BOARD"))
@@ -152,8 +168,9 @@ if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX":
 
 fuse_values = [board_fuses.get(fname, "") for fname in fuse_names]
 lock_fuse = board_fuses.get("lockbit", hex(get_lockbit_fuse()))
-if core == "MegaCoreX":
-    fuse_values = calculate_megacorex_fuses(board, fuse_values)
+if core == "MegaCoreX" or core == "megaTinyCore":
+    fuse_values = calculate_fuses(board, fuse_values)
+
 
 env.Append(
     FUSESUPLOADER="avrdude",
