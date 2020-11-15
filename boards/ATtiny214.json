@@ -1,0 +1,24 @@
+{
+  "build": {
+    "core": "megaTinyCore",
+    "extra_flags": "-DARDUINO_attinyxy4 -DMILLIS_USE_TIMERD0 -DUARTBAUD5V",
+    "f_cpu": "16000000L",
+    "mcu": "attiny214",
+    "variant": "txy4"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "ATtiny214",
+  "upload": {
+    "maximum_ram_size": 128,
+    "maximum_size": 2048,
+    "protocol": "jtag2updi",
+    "speed": 115200
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/ATTINY214",
+  "vendor": "Microchip"
+}
