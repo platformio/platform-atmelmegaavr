@@ -1,6 +1,6 @@
 {
   "build": {
-    "core": "megaTinyCore",
+    "core": "megatinycore",
     "extra_flags": "-DARDUINO_attinyxy6 -DMILLIS_USE_TIMERA0 -DUARTBAUD5V",
     "f_cpu": "16000000L",
     "mcu": "attiny406",
