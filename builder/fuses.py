@@ -46,14 +46,14 @@ def get_syscfg0_fuse(eesave, pin, uart):
             rstpin_bit = 1
         return 0xC0 | rstpin_bit << 3 | eesave_bit
 
-    elif core == "megaTinyCore":
+    elif core == "megatinycore":
         if pin == "gpio":
             updipin_bits = 0x0
         elif pin == "updi":
             updipin_bits = 0x1
         else:
-            rstpin_bit = 0x2
-        return 0xC0 | updipin_bits << 1 | eesave_bit
+            updipin_bits = 0x2
+        return 0xC0 | updipin_bits << 2 | eesave_bit
 
 
 def get_syscfg1_fuse():
@@ -102,7 +102,7 @@ def calculate_fuses(board_config, predefined_fuses):
         if uart != "no_bootloader":
             pin = "reset"
 
-    elif core == "megaTinyCore":
+    elif core == "megatinycore":
         pin = board_config.get("hardware.updipin", "updi").lower()
 
     print("\nTARGET CONFIGURATION:")
@@ -114,7 +114,7 @@ def calculate_fuses(board_config, predefined_fuses):
     print("Save EEPROM = %s" % eesave)
     if core == "MegaCoreX":
         print("Reset pin mode = %s" % pin)
-    elif core == "megaTinyCore":
+    elif core == "megatinycore":
         print("UPDI pin mode = %s" % pin)
     print("------------------------")
 
@@ -159,7 +159,7 @@ fuse_names = (
 )
 
 board_fuses = board.get(fuses_section, {})
-if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX" and core != "megaTinyCore":
+if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX" and core != "megatinycore":
     sys.stderr.write(
         "Error: Dynamic fuses generation for %s / %s is not supported. "
         "Please specify fuses in platformio.ini\n" % (core, env.subst("$BOARD"))
@@ -167,8 +167,8 @@ if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX" and core 
     env.Exit(1)
 
 fuse_values = [board_fuses.get(fname, "") for fname in fuse_names]
-lock_fuse = board_fuses.get("lockbit", hex(get_lockbit_fuse()))
-if core == "MegaCoreX" or core == "megaTinyCore":
+lock_fuse = board_fuses.get("lockbit", "0x%.2X" % get_lockbit_fuse())
+if core == "MegaCoreX" or core == "megatinycore":
     fuse_values = calculate_fuses(board, fuse_values)
 
 
