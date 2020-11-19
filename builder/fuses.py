@@ -112,10 +112,8 @@ def calculate_fuses(board_config, predefined_fuses):
     print("Oscillator = %s" % oscillator)
     print("BOD level = %s" % bod)
     print("Save EEPROM = %s" % eesave)
-    if core == "MegaCoreX":
-        print("Reset pin mode = %s" % pin)
-    elif core == "megatinycore":
-        print("UPDI pin mode = %s" % pin)
+    print("%s = %s" % (
+        "Reset pin mode" if core == "MegaCoreX" else "UPDI pin mode", pin))
     print("------------------------")
 
     return (
@@ -159,7 +157,11 @@ fuse_names = (
 )
 
 board_fuses = board.get(fuses_section, {})
-if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX" and core != "megatinycore":
+if (
+    not board_fuses
+    and "FUSESFLAGS" not in env
+    and core not in ("MegaCoreX", "megatinycore")
+):
     sys.stderr.write(
         "Error: Dynamic fuses generation for %s / %s is not supported. "
         "Please specify fuses in platformio.ini\n" % (core, env.subst("$BOARD"))
@@ -168,7 +170,7 @@ if not board_fuses and "FUSESFLAGS" not in env and core != "MegaCoreX" and core 
 
 fuse_values = [board_fuses.get(fname, "") for fname in fuse_names]
 lock_fuse = board_fuses.get("lockbit", "0x%.2X" % get_lockbit_fuse())
-if core == "MegaCoreX" or core == "megatinycore":
+if core in ("MegaCoreX", "megatinycore"):
     fuse_values = calculate_fuses(board, fuse_values)
 
 
