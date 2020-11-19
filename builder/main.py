@@ -74,7 +74,7 @@ env.Replace(
     UPLOADER="avrdude",
     UPLOADERFLAGS=[
         "-p", "$BOARD_MCU", "-C",
-        '"%s"' % join(env.PioPlatform().get_package_dir(
+        join(env.PioPlatform().get_package_dir(
             "tool-avrdude-megaavr") or "", "avrdude.conf"),
         "-c", "$UPLOAD_PROTOCOL"
     ],
