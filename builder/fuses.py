@@ -180,8 +180,7 @@ env.Append(
         "-p",
         "$BOARD_MCU",
         "-C",
-        '"%s"'
-        % os.path.join(
+        os.path.join(
             env.PioPlatform().get_package_dir("tool-avrdude-megaavr") or "",
             "avrdude.conf",
         ),
