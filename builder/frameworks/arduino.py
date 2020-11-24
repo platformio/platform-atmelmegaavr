@@ -72,7 +72,10 @@ env.Append(
 # Select oscillator using a special macro
 #
 
-if board.get("hardware", {}).get("oscillator", "internal") == "external":
+oscillator_type = board.get("hardware", {}).get("oscillator", "internal")
+if build_core == "megatinycore":
+    env.Append(CPPDEFINES=[("CLOCKSOURCE", 2 if oscillator_type == "external" else 0)])
+elif oscillator_type == "external" and build_core == "MegaCoreX":
     env.Append(CPPDEFINES=["USE_EXTERNAL_OSCILLATOR"])
 
 #
