@@ -203,7 +203,6 @@ else:
         upload_options["use_1200bps_touch"] = True
         upload_options["wait_for_upload_port"] = False
     elif upload_protocol == "arduino":
-        upload_options = env.BoardConfig().get("upload", {})
         upload_options["require_upload_port"] = True
         upload_options["use_1200bps_touch"] = False
         upload_options["wait_for_upload_port"] = False
