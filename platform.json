@@ -49,6 +49,12 @@
       "owner": "platformio",
       "version": "~2.1.5"
     },
+    "framework-arduino-megaavr-dxcore": {
+      "type": "framework",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~1.2.0"
+    },
     "tool-avrdude-megaavr": {
       "type": "uploader",
       "optional": true,
