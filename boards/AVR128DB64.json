@@ -1,0 +1,24 @@
+{
+  "build": {
+    "core": "dxcore",
+    "extra_flags": "-DARDUINO_AVR_AVR128DB64 -DARDUINO_avrdb -DMILLIS_USE_TIMERB0",
+    "f_cpu": "24000000L",
+    "mcu": "avr128db64",
+    "variant": "64pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "AVR128DB64",
+  "upload": {
+    "maximum_ram_size": 16384,
+    "maximum_size": 131072,
+    "protocol": "jtag2updi",
+    "speed": 115200
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/AVR128DB64",
+  "vendor": "Microchip"
+}
