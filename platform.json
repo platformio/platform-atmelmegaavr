@@ -29,7 +29,8 @@
     "toolchain-atmelavr": {
       "type": "toolchain",
       "owner": "platformio",
-      "version": "~1.70300.0"
+      "version": "~1.70300.0",
+      "optionalVersions": ["~2.70300.0"]
     },
     "framework-arduino-megaavr": {
       "type": "framework",
@@ -53,7 +54,8 @@
       "type": "uploader",
       "optional": true,
       "owner": "platformio",
-      "version": "~1.60300.0"
+      "version": "~1.60300.0",
+      "optionalVersions": ["~2.60300.0"]
     }
   }
 }
