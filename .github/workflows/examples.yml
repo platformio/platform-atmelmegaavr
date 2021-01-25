@@ -27,7 +27,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -U https://github.com/platformio/platformio/archive/develop.zip
-          platformio platform install file://.
+          platformio platform install file://. --with-all-packages
+          pip install -U shutils pathlib bs4 zipfile2 six
+          python .github/patchtoolchain.py
       - name: Build examples
         run: |
           platformio run -d ${{ matrix.example }}
