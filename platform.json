@@ -42,7 +42,7 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~1.0.5"
+      "version": "~1.0.7"
     },
     "framework-arduino-megaavr-megatinycore": {
       "type": "framework",
