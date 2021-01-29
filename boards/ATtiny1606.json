@@ -1,0 +1,24 @@
+{
+  "build": {
+    "core": "megatinycore",
+    "extra_flags": "-DARDUINO_attinyxy6 -DMILLIS_USE_TIMERA0 -DUARTBAUD5V",
+    "f_cpu": "16000000L",
+    "mcu": "attiny1606",
+    "variant": "txy6"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "ATtiny1606",
+  "upload": {
+    "maximum_ram_size": 1024,
+    "maximum_size": 16384,
+    "protocol": "jtag2updi",
+    "speed": 115200
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/ATTINY1606",
+  "vendor": "Microchip"
+}

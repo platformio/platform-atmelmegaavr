@@ -74,7 +74,7 @@ env.Replace(
     UPLOADER="avrdude",
     UPLOADERFLAGS=[
         "-p", "$BOARD_MCU", "-C",
-        '"%s"' % join(env.PioPlatform().get_package_dir(
+        join(env.PioPlatform().get_package_dir(
             "tool-avrdude-megaavr") or "", "avrdude.conf"),
         "-c", "$UPLOAD_PROTOCOL"
     ],
@@ -196,13 +196,13 @@ else:
         env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")
     ]
 
+    upload_options = env.BoardConfig().get("upload", {})
     # jtag2updi seems to be the only protocol that requires serial port
     if upload_protocol == "jtag2updi":
-        upload_options = env.BoardConfig().get("upload", {})
-        for opt in ("require_upload_port", "use_1200bps_touch", "wait_for_upload_port"):
-            upload_options[opt] = True
+        upload_options["require_upload_port"] = True
+        upload_options["use_1200bps_touch"] = True
+        upload_options["wait_for_upload_port"] = False
     elif upload_protocol == "arduino":
-        upload_options = env.BoardConfig().get("upload", {})
         upload_options["require_upload_port"] = True
         upload_options["use_1200bps_touch"] = False
         upload_options["wait_for_upload_port"] = False

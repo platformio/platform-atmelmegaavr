@@ -1,0 +1,24 @@
+{
+  "build": {
+    "core": "megatinycore",
+    "extra_flags": "-DARDUINO_attinyxy7 -DMILLIS_USE_TIMERA0 -DUARTBAUD5V",
+    "f_cpu": "16000000L",
+    "mcu": "attiny1607",
+    "variant": "txy7"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "ATtiny1607",
+  "upload": {
+    "maximum_ram_size": 1024,
+    "maximum_size": 16384,
+    "protocol": "jtag2updi",
+    "speed": 115200
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/ATTINY1607",
+  "vendor": "Microchip"
+}
