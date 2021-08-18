@@ -48,7 +48,7 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~2.1.5"
+      "version": "~2.3.0"
     },
     "tool-avrdude-megaavr": {
       "type": "uploader",
