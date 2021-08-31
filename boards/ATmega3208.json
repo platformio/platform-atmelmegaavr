@@ -1,7 +1,7 @@
 {
   "build": {
     "core": "MegaCoreX",
-    "extra_flags": "-DARDUINO_AVR_ATMEGA3208",
+    "extra_flags": "-DARDUINO_AVR_ATmega3208",
     "f_cpu": "16000000L",
     "mcu": "atmega3208",
     "variant": "32pin-standard"
