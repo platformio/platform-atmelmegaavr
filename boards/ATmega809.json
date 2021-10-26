@@ -1,7 +1,7 @@
 {
   "build": {
     "core": "MegaCoreX",
-    "extra_flags": "-DARDUINO_AVR_ATMEGA809",
+    "extra_flags": "-DARDUINO_AVR_ATmega809",
     "f_cpu": "16000000L",
     "mcu": "atmega809",
     "variant": "48pin-standard"
