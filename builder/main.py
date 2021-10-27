@@ -153,6 +153,17 @@ else:
 AlwaysBuild(env.Alias("nobuild", target_firm))
 target_buildprog = env.Alias("buildprog", target_firm, target_firm)
 
+
+#
+# Target: Fix toolchain
+#
+
+fixtoolchain_action = None
+if "fixtoolchain" in COMMAND_LINE_TARGETS:
+    fixtoolchain_action = env.SConscript("fixtoolchain.py", exports="env")
+env.AddPlatformTarget("fixtoolchain", None, fixtoolchain_action, "Fix Toolchain")
+
+
 #
 # Target: Print binary size
 #
