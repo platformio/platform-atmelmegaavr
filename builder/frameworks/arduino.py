@@ -31,10 +31,7 @@ platform = env.PioPlatform()
 board = env.BoardConfig()
 build_core = board.get("build.core", "")
 
-FRAMEWORK_DIR = platform.get_package_dir("framework-arduino-megaavr")
-if build_core != "arduino":
-    FRAMEWORK_DIR = platform.get_package_dir(
-        "framework-arduino-megaavr-%s" % build_core.lower())
+FRAMEWORK_DIR = platform.get_package_dir("framework-arduino-megaavr-dxcore")
 
 assert isdir(FRAMEWORK_DIR)
 

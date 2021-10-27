@@ -1,11 +1,4 @@
-# Atmel megaAVR: development platform for [PlatformIO](http://platformio.org)
-
-[![Build Status](https://github.com/platformio/platform-atmelmegaavr/workflows/Examples/badge.svg)](https://github.com/platformio/platform-atmelmegaavr/actions)
-
-Microchip's megaAVR is suitable for applications requiring large amounts of code and offers substantial program and data memories with performance up to 20 MIPS. Based on industry-leading, proven technology, the megaAVR family offers Microchip's widest selection of devices in terms of memories, pin counts, and peripherals.
-
-* [Home](http://platformio.org/platforms/atmelmegaavr) (home page in PlatformIO Platform Registry)
-* [Documentation](http://docs.platformio.org/page/platforms/atmelmegaavr.html) (advanced usage, packages, boards, frameworks, etc.)
+# Atmel AVR Dx: development platform for [PlatformIO](http://platformio.org)
 
 # Usage
 
@@ -16,7 +9,7 @@ Microchip's megaAVR is suitable for applications requiring large amounts of code
 
 ```ini
 [env:stable]
-platform = atmelmegaavr
+platform = atmelavrdx
 board = ...
 ...
 ```
@@ -25,11 +18,20 @@ board = ...
 
 ```ini
 [env:development]
-platform = https://github.com/platformio/platform-atmelmegaavr.git
+platform = https://github.com/brunob45/platform-atmelavrdx.git
 board = ...
 ...
 ```
 
 # Configuration
 
-Please navigate to [documentation](http://docs.platformio.org/page/platforms/atmelmegaavr.html).
+Supported boards:
+- AVR128DA64
+- AVR128DA48
+- AVR128DA32
+- AVR128DA28
+
+Supported boards with patched toolchain
+- AVR32DB28
+- AVR32DB32
+- AVR32DB48
