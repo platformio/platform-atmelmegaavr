@@ -28,5 +28,8 @@ How to build PlatformIO based project
     # Build specific environment
     > platformio run -e AVR128DA64
 
+    # Build specific environment and patch the toolchain
+    > platformio run -e AVR32DB48 -t fixtoolchain
+
     # Clean build files
     > platformio run --target clean

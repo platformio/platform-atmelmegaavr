@@ -31,7 +31,7 @@ Supported boards:
 - AVR128DA32
 - AVR128DA28
 
-Supported boards with patched toolchain
+Supported boards with patched toolchain: call `platformio run -t fixtoolchain` once before the first build
 - AVR32DB28
 - AVR32DB32
 - AVR32DB48
