@@ -75,6 +75,8 @@ if not ToolchainPath.exists():
 else:
     print("Found toolchain at", ToolchainPath)
 
+os.chdir(ToolchainPath)
+
 # get pack list from atmel's website
 print("Retrieving packs information...")
 repo = 'http://packs.download.atmel.com/'
