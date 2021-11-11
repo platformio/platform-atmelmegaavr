@@ -75,6 +75,17 @@ if not ToolchainPath.exists():
 else:
     print("Found toolchain at", ToolchainPath)
 
+# find atmelavrdx package
+if (PlatformioPath / "platforms/atmelavrdx").exists():
+    PlatformPath = PlatformioPath / "platforms/atmelavrdx"
+elif (PlatformioPath / "platforms/atmelmegaavr").exists():
+    PlatformPath = PlatformioPath / "platforms/atmelmegaavr"
+else:
+    print("Cannot find atmelavrdx platform")
+    exit(2)
+
+print("Found atmelavrdx at", PlatformPath)
+
 os.chdir(ToolchainPath)
 
 # get pack list from atmel's website
@@ -113,8 +124,8 @@ print_verbose("Copying files...")
 filefilter = str(AvrDaToolkitPath) + \
     r"/(gcc|include)/.*(/specs-.*|\d+\.[aoh]$)"
 
-if not (PlatformioPath / "boards").exists():
-    (PlatformioPath / "boards").mkdir()
+if not (PlatformPath / "boards").exists():
+    (PlatformPath / "boards").mkdir()
 
 # find all header, linker and specs files needed for compilation
 for f in find_file(AvrDaToolkitPath, filefilter):
@@ -147,10 +158,8 @@ for f in find_file(AvrDaToolkitPath, filefilter):
         boardtemplate["url"] = re.sub(
             r"/avr\d+d[ab]\d+$", "/"+boardinfo.group(1), boardtemplate["url"])
 
-        if not (PlatformioPath / "boards").exists():
-            (PlatformioPath / "boards").mkdir()
-
-        newboardfile = PlatformioPath / "boards" / (boardinfo.group(1)+".json")
+        newboardfile = PlatformPath / "boards" / (boardinfo.group(1).upper()+".json")
+        print(newboardfile)
         json.dump(boardtemplate, open(newboardfile, "w+"), indent=4)
 
         print_verbose("Board definition file created ->", newboardfile)
