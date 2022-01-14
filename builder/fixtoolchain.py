@@ -93,7 +93,7 @@ else:
 
 print("Found atmelavrdx at", PlatformPath)
 
-os.chdir(ToolchainPath)
+os.chdir(str(ToolchainPath))
 
 # get pack list from atmel's website
 print("Retrieving packs information...")

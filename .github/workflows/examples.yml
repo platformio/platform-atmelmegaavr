@@ -27,7 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -U https://github.com/platformio/platformio/archive/develop.zip
-          platformio platform install file://. --with-all-packages
+          platformio platform install file://.
           pip install -U shutils pathlib bs4 zipfile2 six
           platformio run -d examples/native-blink -e AVR128DA48 -t fixtoolchain
 #          python .github/patchtoolchain.py
