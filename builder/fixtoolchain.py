@@ -34,23 +34,30 @@ def find_file(dir: Path, match):
 # load template for board definition
 boardtemplate = json.loads("""
 {
-    "build": {
-      "extra_flags": "",
-      "f_cpu": "4000000UL",
-      "mcu": "avr128da48"
-    },
-    "frameworks": [],
-    "platforms": ["atmelavrdx"],
-    "name": "avr128da48",
-    "upload": {
-      "maximum_ram_size": 16384,
-      "maximum_size": 131072,
-      "protocol": "custom",
-      "command": "pymcuprog erase && pymcuprog write -f $SOURCE"
-    },
-    "url": "https://www.microchip.com/wwwproducts/en/avr128da48",
-    "vendor": "Microchip"
-  }
+  "build": {
+    "core": "dxcore",
+    "extra_flags": "-DARDUINO_AVR_AVR128DA48 -DARDUINO_avrda -DMILLIS_USE_TIMERB0",
+    "f_cpu": "24000000L",
+    "mcu": "avr128da48",
+    "variant": "48pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "AVR128DA48",
+  "upload": {
+    "maximum_ram_size": 16384,
+    "maximum_size": 131072,
+    "protocol": "jtag2updi",
+    "speed": 115200
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/AVR128DA48",
+  "vendor": "Microchip"
+}
+
 """)
 
 # find platformio installation path
@@ -92,16 +99,17 @@ os.chdir(ToolchainPath)
 print("Retrieving packs information...")
 repo = 'http://packs.download.atmel.com/'
 index_url = repo + 'index.idx'
-with  request.urlopen(index_url) as response:
+with request.urlopen(index_url) as response:
     index = response.read()
 index_root = ET.fromstring(index)
 
 
-ns = { 'atmel': 'http://packs.download.atmel.com/pack-idx-atmel-extension' }
+ns = {'atmel': 'http://packs.download.atmel.com/pack-idx-atmel-extension'}
 avrdx = index_root.find('./pdsc[@atmel:name = "AVR-Dx_DFP"]', ns)
 version = avrdx.get('version')
 url = avrdx.get('url')
-devices = [device.get('name') for device in avrdx.findall('./atmel:releases/atmel:release[1]/atmel:devices/atmel:device', ns)]
+devices = [device.get('name') for device in avrdx.findall(
+    './atmel:releases/atmel:release[1]/atmel:devices/atmel:device', ns)]
 
 link = 'Atmel.AVR-Dx_DFP.' + version + '.atpack'
 
@@ -146,21 +154,33 @@ for f in find_file(AvrDaToolkitPath, filefilter):
 
     print_verbose(f, "->", mynewdir)
 
+    # group(1): avr128da48
+    # group(2): 128
+    # group(3): a
+    # group(4): 48
     boardinfo = re.match(r"^io(avr(\d+)d(\w)(\d+))$", f.stem)
     if boardinfo is not None:
         # create board definition file
+        boardtemplate["build"]["extra_flags"] = "-DARDUINO_AVR_{0} -DARDUINO_avrd{1} -DMILLIS_USE_TIMERB0".format(
+            boardinfo.group(1).upper(),
+            boardinfo.group(3))
         boardtemplate["build"]["mcu"] = boardinfo.group(1)
+        boardtemplate["build"]["variant"] = "{0}pin-standard".format(
+            boardinfo.group(4))
         boardtemplate["name"] = boardinfo.group(1).upper()
         boardtemplate["upload"]["maximum_ram_size"] = int(
             boardinfo.group(2)) * 128
         boardtemplate["upload"]["maximum_size"] = int(
             boardinfo.group(2)) * 1024
-        boardtemplate["url"] = re.sub(
-            r"/avr\d+d[ab]\d+$", "/"+boardinfo.group(1), boardtemplate["url"])
+        boardtemplate["url"] = "https://www.microchip.com/wwwproducts/en/{0}".format(
+            boardinfo.group(1).upper())
 
-        newboardfile = PlatformPath / "boards" / (boardinfo.group(1).upper()+".json")
+        newboardfile = PlatformPath / "boards" / \
+            (boardinfo.group(1).upper()+".json")
         print(newboardfile)
-        json.dump(boardtemplate, open(newboardfile, "w+"), indent=4)
+
+        with open(newboardfile, "w+") as fd:
+            fd.write(json.dumps(boardtemplate, indent=2) + '\n')
 
         print_verbose("Board definition file created ->", newboardfile)
 
