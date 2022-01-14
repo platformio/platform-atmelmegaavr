@@ -22,7 +22,7 @@ def print_verbose(*args):
 def find_file(dir: Path, match):
     # function to find all files in a directory tree
     result = []
-    for e in os.listdir(dir):
+    for e in os.listdir(str(dir)):
         fullpath = dir / e
         if fullpath.is_file() and re.search(match, str(fullpath)):
             result += [fullpath]
@@ -57,7 +57,6 @@ boardtemplate = json.loads("""
   "url": "https://www.microchip.com/wwwproducts/en/AVR128DA48",
   "vendor": "Microchip"
 }
-
 """)
 
 # find platformio installation path
@@ -73,6 +72,7 @@ if not PlatformioPath.exists():
     exit(1)
 else:
     print("Found Platformio at", PlatformioPath)
+
 
 # find atmelavr toolchain
 ToolchainPath = PlatformioPath / "packages/toolchain-atmelavr"
@@ -98,8 +98,7 @@ os.chdir(str(ToolchainPath))
 # get pack list from atmel's website
 print("Retrieving packs information...")
 repo = 'http://packs.download.atmel.com/'
-index_url = repo + 'index.idx'
-with request.urlopen(index_url) as response:
+with request.urlopen(repo + 'index.idx') as response:
     index = response.read()
 index_root = ET.fromstring(index)
 
@@ -113,6 +112,7 @@ devices = [device.get('name') for device in avrdx.findall(
 
 link = 'Atmel.AVR-Dx_DFP.' + version + '.atpack'
 
+# get latest pack file from atmel's website
 AvrDaToolkitPack = Path(link)
 if not AvrDaToolkitPack.exists():
     print("Downloading", AvrDaToolkitPack, repo + link)
@@ -123,12 +123,16 @@ else:
 AvrDaToolkitPack = Path(link)
 AvrDaToolkitPath = Path(AvrDaToolkitPack.stem)
 
+
+# extract pack file
 if not AvrDaToolkitPath.exists():
     print("Extracting ", AvrDaToolkitPack, "into", AvrDaToolkitPath)
-    ZipFile(AvrDaToolkitPack, "r").extractall(AvrDaToolkitPath)
+    ZipFile(str(AvrDaToolkitPack), "r").extractall(str(AvrDaToolkitPath))
 
 print_verbose("Copying files...")
 
+
+# filter to gather only the files we want
 filefilter = str(AvrDaToolkitPath) + \
     r"/(gcc|include)/.*(/specs-.*|\d+\.[aoh]$)"
 
@@ -143,14 +147,14 @@ for f in find_file(AvrDaToolkitPath, filefilter):
         mynewdir = ToolchainPath / "avr/lib" / str(f).split(os.sep)[-2]
     else:  # is specs file
         mynewdir = ToolchainPath / "lib/gcc/avr/"
-        mynewdir /= os.listdir(mynewdir)[0]
+        mynewdir /= os.listdir(str(mynewdir))[0]
         mynewdir /= "device-specs"
 
     # copy file
-    copyfile(f, mynewdir / f.name)
+    copyfile(str(f), str(mynewdir / f.name))
 
     # remove administrator rights from file
-    os.chmod(mynewdir / f.name, 420)  # 644 in octal
+    os.chmod(str(mynewdir / f.name), 420)  # 644 in octal
 
     print_verbose(f, "->", mynewdir)
 
@@ -179,7 +183,7 @@ for f in find_file(AvrDaToolkitPath, filefilter):
             (boardinfo.group(1).upper()+".json")
         print(newboardfile)
 
-        with open(newboardfile, "w+") as fd:
+        with open(str(newboardfile), "w+") as fd:
             fd.write(json.dumps(boardtemplate, indent=2) + '\n')
 
         print_verbose("Board definition file created ->", newboardfile)
