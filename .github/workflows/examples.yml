@@ -11,7 +11,7 @@ jobs:
         python-version: [3.7]
         example:
           - "examples/arduino-blink"
-          - "examples/arduino-external-libs"
+#          - "examples/arduino-external-libs"
           - "examples/arduino-internal-libs"
           - "examples/native-blink"
     runs-on: ${{ matrix.os }}
