@@ -116,7 +116,7 @@ link = 'Atmel.AVR-Dx_DFP.' + version + '.atpack'
 AvrDaToolkitPack = Path(link)
 if not AvrDaToolkitPack.exists():
     print("Downloading", AvrDaToolkitPack, repo + link)
-    request.urlretrieve(repo + link, AvrDaToolkitPack)
+    request.urlretrieve(str(repo + link, AvrDaToolkitPack))
 else:
     print("Using local", AvrDaToolkitPack)
 
