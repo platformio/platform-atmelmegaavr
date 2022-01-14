@@ -11,7 +11,7 @@ jobs:
         python-version: [3.7]
         example:
           - "examples/arduino-blink"
-#          - "examples/arduino-external-libs"
+          - "examples/arduino-external-libs"
           - "examples/arduino-internal-libs"
           - "examples/native-blink"
     runs-on: ${{ matrix.os }}
@@ -27,9 +27,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -U https://github.com/platformio/platformio/archive/develop.zip
-          platformio platform install file://. --with-all-packages
           pip install -U shutils pathlib bs4 zipfile2 six
-          python .github/patchtoolchain.py
+          platformio platform install file://.
+          platformio run -d examples/native-blink -e AVR128DA48 -t fixtoolchain
+#          python .github/patchtoolchain.py
       - name: Build examples
         run: |
           platformio run -d ${{ matrix.example }}
