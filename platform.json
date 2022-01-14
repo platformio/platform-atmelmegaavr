@@ -1,8 +1,8 @@
 {
-  "name": "atmelavrdx",
-  "title": "Atmel AVR Dx",
+  "name": "atmelmegaavr",
+  "title": "Atmel megaAVR",
   "description": "8-bit MCUs Built for Real-time Control with Core Independent Peripherals combining intelligent hardware peripherals along with the low-power capability of an AVR core, megaAVR microcontrollers (MCUs) broaden the effectiveness of your real-time control systems.",
-  "homepage": "https://www.microchip.com/design-centers/8-bit/avr-mcus/device-selection/avr-da",
+  "homepage": "https://www.microchip.com/design-centers/8-bit/avr-mcus/device-selection/atmega4809",
   "license": "Apache-2.0",
   "keywords": [
     "dev-platform",
@@ -16,12 +16,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/brunob45/platform-atmelavrdx.git"
+    "url": "https://github.com/platformio/platform-atmelmegaavr.git"
   },
   "version": "1.5.0",
   "frameworks": {
     "arduino": {
-      "package": "framework-arduino-megaavr-dxcore",
+      "package": "framework-arduino-megaavr",
       "script": "builder/frameworks/arduino.py"
     }
   },
@@ -29,7 +29,26 @@
     "toolchain-atmelavr": {
       "type": "toolchain",
       "owner": "platformio",
-      "version": "~2.70300.0"
+      "version": "~1.70300.0",
+      "optionalVersions": ["~2.70300.0"]
+    },
+    "framework-arduino-megaavr": {
+      "type": "framework",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~1.8.7"
+    },
+    "framework-arduino-megaavr-megacorex": {
+      "type": "framework",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~1.0.7"
+    },
+    "framework-arduino-megaavr-megatinycore": {
+      "type": "framework",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~2.4.0"
     },
     "framework-arduino-megaavr-dxcore": {
       "type": "framework",
