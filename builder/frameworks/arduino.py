@@ -26,8 +26,6 @@ from os.path import isdir, join
 
 from SCons.Script import DefaultEnvironment
 
-from platformio.package.version import get_original_version
-
 env = DefaultEnvironment()
 platform = env.PioPlatform()
 board = env.BoardConfig()
@@ -76,34 +74,26 @@ elif oscillator_type == "external" and build_core == "MegaCoreX":
     env.Append(CPPDEFINES=["USE_EXTERNAL_OSCILLATOR"])
 
 #
-# Additional definitions for DxCore
+# Additional definitions for DxCore and MegaTinyCore
 #
 
-if build_core == "dxcore":
-    package_version = platform.get_package_version("framework-arduino-megaavr-dxcore")
+if build_core in ("dxcore", "megatinycore"):
+    package_version = platform.get_package_version(
+        "framework-arduino-megaavr-%s" % build_core
+    )
     major, minor, patch = package_version.split(".")
+
+    core_macro_name = build_core.upper()
     env.Append(
         CCFLAGS=["-mrelax"],
-
         CPPDEFINES=[
-            ("DXCORE", '\\"%s\\"' % package_version),
-            ("DXCORE_MAJOR", "%sUL" % major),
-            ("DXCORE_MINOR", "%sUL" % minor),
-            ("DXCORE_PATCH", "%sUL" % patch),
+            (core_macro_name, '\\"%s\\"' % package_version),
+            ("%s_MAJOR" % core_macro_name, "%sUL" % major),
+            ("%s_MINOR" % core_macro_name, "%sUL" % minor),
+            ("%s_PATCH" % core_macro_name, "%sUL" % patch),
+            ("%s_RELEASED" % core_macro_name, 1),
             "CORE_ATTACH_ALL",
-            "TWI_MORS_SINGLE",
-            "MILLIS_USE_TIMERB2",
-        ],
-
-        LINKFLAGS=[
-            "-mrelax",
-            "-Wl,--section-start=.FLMAP_SECTION1=%s"
-            % board.get("build.arduino.flmap_section1", "0x8000"),
-            "-Wl,--section-start=.FLMAP_SECTION2=%s"
-            % board.get("build.arduino.flmap_section2", "0x10000"),
-            "-Wl,--section-start=.FLMAP_SECTION3=%s"
-            % board.get("build.arduino.flmap_section3", "0x18000"),
-        ],
+        ]
     )
 
     env.Replace(
@@ -117,6 +107,30 @@ if build_core == "dxcore":
             "-Wno-error=narrowing",
         ],
     )
+
+    if build_core == "megatinycore":
+        env.Append(
+            CPPDEFINES=[
+                "TWI_MORS"
+            ],
+        )
+    elif build_core == "dxcore":
+        env.Append(
+            CPPDEFINES=[
+                "TWI_MORS_SINGLE",
+                "MILLIS_USE_TIMERB2",
+            ],
+            LINKFLAGS=[
+                "-mrelax",
+                "-Wl,--section-start=.FLMAP_SECTION1=%s"
+                % board.get("build.arduino.flmap_section1", "0x8000"),
+                "-Wl,--section-start=.FLMAP_SECTION2=%s"
+                % board.get("build.arduino.flmap_section2", "0x10000"),
+                "-Wl,--section-start=.FLMAP_SECTION3=%s"
+                % board.get("build.arduino.flmap_section3", "0x18000"),
+            ],
+        )
+
 
 #
 # Target: Build Core Library
