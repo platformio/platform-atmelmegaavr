@@ -1,7 +1,7 @@
 {
   "build": {
     "core": "dxcore",
-    "extra_flags": "-DARDUINO_AVR_AVR128DA28 -DARDUINO_avrda -DMILLIS_USE_TIMERB0",
+    "extra_flags": "-DARDUINO_AVR_AVR128DA28 -DARDUINO_avrda",
     "f_cpu": "24000000L",
     "mcu": "avr128da28",
     "variant": "28pin-standard"
