@@ -70,8 +70,15 @@ def get_syscfg0_fuse(eesave, pin, uart):
         return 0xC0 | updipin_bits << 2 | eesave_bit
 
 
-def get_syscfg1_fuse():
-    return 0x06
+# Handle AVR-DB's differently since these has MVIO pins
+def get_syscfg1_fuse(mvio):
+    if core == "dxcore" and ("db" in board.get("build.mcu").lower()):
+        if(mvio == "yes"):
+            return 0x0E
+        else:
+            return 0x16
+    else:
+        return 0x06
 
 
 # Called CODESIZE on AVR-Dx
@@ -101,13 +108,13 @@ def print_fuses_info(fuse_values, fuse_names, lock_fuse):
     if "upload" in COMMAND_LINE_TARGETS:
         return
     print("\nSelected fuses:")
-    print("------------------------")
+    print("-------------------------")
     for idx, value in enumerate(fuse_values):
         if value:
-            print("[fuse%d / %-7s = %s]" % (idx, fuse_names[idx].upper(), value))
+            print("[fuse%d / %-8s = %s]" % (idx, fuse_names[idx].lower(), value))
     if lock_fuse:
-        print("[lfuse / LOCKBIT = %s]" % lock_fuse)
-    print("------------------------\n")
+        print("[lock  / lockbit  = %s]" % lock_fuse)
+    print("-------------------------\n")
 
 
 def calculate_fuses(board_config, predefined_fuses):
@@ -117,6 +124,7 @@ def calculate_fuses(board_config, predefined_fuses):
     bod = board_config.get("hardware.bod", "2.6v").lower()
     uart = board_config.get("hardware.uart", "no_bootloader").lower()
     eesave = board_config.get("hardware.eesave", "yes").lower()
+    mvio = board_config.get("hardware.mvio_enable", "no").lower()
     if core in ("MegaCoreX", "dxcore"):
         pin = board_config.get("hardware.rstpin", "reset").lower()
         # Guard that prevents the user from turning the reset pin
@@ -127,15 +135,18 @@ def calculate_fuses(board_config, predefined_fuses):
         pin = board_config.get("hardware.updipin", "updi").lower()
 
     print("\nTARGET CONFIGURATION:")
-    print("------------------------")
+    print("-------------------------")
     print("Target = %s" % target)
     print("Clock speed = %s" % f_cpu)
     print("Oscillator = %s" % oscillator)
     print("BOD level = %s" % bod)
     print("Save EEPROM = %s" % eesave)
+    if core == "dxcore" and "db" in board.get("build.mcu").lower():
+        print("MVIO enable = %s" % mvio)
     print("%s = %s" % (
         "Reset pin mode" if core in ("MegaCoreX", "dxcore") else "UPDI pin mode", pin))
-    print("------------------------")
+    print("-------------------------")
+
 
     return (
         predefined_fuses[0] or "0x%.2X" % get_wdtcfg_fuse(),
@@ -144,7 +155,7 @@ def calculate_fuses(board_config, predefined_fuses):
         "",  # reserved
         predefined_fuses[4] or "0x%.2X" % get_tcd0cfg_fuse(),
         predefined_fuses[5] or "0x%.2X" % get_syscfg0_fuse(eesave, pin, uart),
-        predefined_fuses[6] or "0x%.2X" % get_syscfg1_fuse(),
+        predefined_fuses[6] or "0x%.2X" % get_syscfg1_fuse(mvio),
         predefined_fuses[7] or "0x%.2X" % get_append_fuse(),
         predefined_fuses[8] or "0x%.2X" % get_bootend_fuse(uart),
     )
