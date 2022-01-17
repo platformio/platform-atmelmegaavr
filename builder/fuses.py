@@ -20,7 +20,7 @@ def get_bodcfg_fuse(bod):
             return 0x34
         elif bod == "1.9v":
             return 0x14
-        else # bod disabled
+        else: # bod disabled
             return 0x00
     elif core in ("MegaCoreX", "megatinycore"):
         if bod == "4.3v":
