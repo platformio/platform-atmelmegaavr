@@ -60,7 +60,7 @@
       "optional": true,
       "owner": "platformio",
       "version": "~1.60300.0",
-      "optionalVersions": ["~2.60300.0"]
+      "optionalVersions": ["~3.60300.0"]
     }
   }
 }
