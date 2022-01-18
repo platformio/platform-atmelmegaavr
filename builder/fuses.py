@@ -2,6 +2,7 @@ import sys
 import os
 
 from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, Import, Return
+from platformio.util import get_serial_ports
 
 Import("env")
 
@@ -98,7 +99,7 @@ def get_bootend_fuse(uart):
 
 
 def get_lockbit_fuse():
-    if core in ("MegaCoreX", "megatinycore"):
+    if core in ("arduino", "MegaCoreX", "megatinycore"):
         return 0xC5
     elif core == "dxcore":
         return 0x5CC5C55C
@@ -234,12 +235,14 @@ if lock_fuse:
 if int(ARGUMENTS.get("PIOVERBOSE", 0)):
     env.Append(FUSESUPLOADERFLAGS=["-v"])
 
-if not env.BoardConfig().get("upload", {}).get("require_upload_port", False):
-    # upload methods via USB
-    env.Append(FUSESUPLOADERFLAGS=["-P", "usb"])
-else:
+# Add upload serial port to Avrdude flags list if a jtag2updi programmer
+if env.subst("$UPLOAD_PROTOCOL") == "jtag2updi":
     env.AutodetectUploadPort()
     env.Append(FUSESUPLOADERFLAGS=["-P", '"$UPLOAD_PORT"'])
+else:
+    # upload methods via USB
+    env.Append(FUSESUPLOADERFLAGS=["-P", "usb"])
+
 
 if env.subst("$UPLOAD_PROTOCOL") != "custom":
     env.Append(FUSESUPLOADERFLAGS=["-c", "$UPLOAD_PROTOCOL"])
@@ -252,6 +255,16 @@ else:
     )
 
 print_fuses_info(fuse_values, fuse_names, lock_fuse)
+
+# Handle jtag2updi 1200bps uart touch (present on Arduino Nano Every)
+upload_options = env.BoardConfig().get("upload", {})
+if upload_options.get("use_1200bps_touch", False) == "true":
+    before_ports = get_serial_ports()
+    env.AutodetectUploadPort()
+    env.TouchSerialPort("$UPLOAD_PORT", 1200)
+    if upload_options.get("wait_for_upload_port", True):
+        env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
+
 
 fuses_action = env.VerboseAction("$SETFUSESCMD", "Setting fuses...")
 
