@@ -16,7 +16,7 @@
   "upload": {
     "maximum_ram_size": 16384,
     "maximum_size": 131072,
-    "protocol": "curiosity_updi"
+    "protocol": "pkobn_updi"
   },
   "url": "https://www.microchip.com/developmenttools/ProductDetails/EV35L43A",
   "vendor": "Microchip"
