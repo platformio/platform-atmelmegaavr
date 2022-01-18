@@ -258,7 +258,7 @@ print_fuses_info(fuse_values, fuse_names, lock_fuse)
 
 # Handle jtag2updi 1200bps uart touch (present on Arduino Nano Every)
 upload_options = env.BoardConfig().get("upload", {})
-if upload_options.get("use_1200bps_touch", False) == "true":
+if upload_options.get("use_1200bps_touch", False) in (True, "true"):
     before_ports = get_serial_ports()
     env.AutodetectUploadPort()
     env.TouchSerialPort("$UPLOAD_PORT", 1200)
