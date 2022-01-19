@@ -20,7 +20,7 @@ def get_bodcfg_fuse(bod):
             return 0x34
         elif bod == "1.9v":
             return 0x14
-        else: # bod disabled
+        else:  # bod disabled
             return 0x00
     elif core in ("MegaCoreX", "megatinycore"):
         if bod == "4.3v":
@@ -29,7 +29,7 @@ def get_bodcfg_fuse(bod):
             return 0x54
         elif bod == "1.8v":
             return 0x14
-        else: # bod disabled
+        else:  # bod disabled
             return 0x00
 
 
@@ -69,6 +69,9 @@ def get_syscfg0_fuse(eesave, pin, uart):
             updipin_bits = 2
         return 0xC0 | updipin_bits << 2 | eesave_bit
 
+    sys.stderr.write("Error: Couldn't calculate SYSCFG0  fuse for %s\n" % target)
+    env.Exit(1)
+
 
 # Handle AVR-DB's differently since these has MVIO pins
 def get_syscfg1_fuse(mvio):
@@ -80,6 +83,9 @@ def get_syscfg1_fuse(mvio):
     else:
         return 0x06
 
+    sys.stderr.write("Error: Couldn't calculate SYSCFG1  fuse for %s\n" % target)
+    env.Exit(1)
+
 
 # Called CODESIZE on AVR-Dx
 def get_append_fuse():
@@ -90,11 +96,14 @@ def get_append_fuse():
 def get_bootend_fuse(uart):
     if uart == "no_bootloader":
         return 0x00
-    else: 
+    else:
         if core in ("MegaCoreX", "megatinycore"):
             return 0x02
         elif core == "dxcore":
             return 0x01
+
+    sys.stderr.write("Error: Couldn't calculate bootend for %s\n" % target)
+    env.Exit(1)
 
 
 def get_lockbit_fuse():
@@ -102,6 +111,9 @@ def get_lockbit_fuse():
         return 0xC5
     elif core == "dxcore":
         return 0x5CC5C55C
+    else:
+        sys.stderr.write("Error: Couldn't calculate lockbit for %s\n" % target)
+        env.Exit(1)
 
 
 def print_fuses_info(fuse_values, fuse_names, lock_fuse):
@@ -118,7 +130,6 @@ def print_fuses_info(fuse_values, fuse_names, lock_fuse):
 
 
 def calculate_fuses(board_config, predefined_fuses):
-    megaavr_fuses = []
     f_cpu = board_config.get("build.f_cpu", "16000000L").upper()
     oscillator = board_config.get("hardware.oscillator", "internal").lower()
     bod = board_config.get("hardware.bod", "2.6v").lower()
@@ -146,7 +157,6 @@ def calculate_fuses(board_config, predefined_fuses):
     print("%s = %s" % (
         "Reset pin mode" if core in ("MegaCoreX", "dxcore") else "UPDI pin mode", pin))
     print("-------------------------")
-
 
     return (
         predefined_fuses[0] or "0x%.2X" % get_wdtcfg_fuse(),
@@ -184,7 +194,7 @@ fuse_names = (
     "tcd0cfg",
     "syscfg0",
     "syscfg1",
-    "append"  if core in ("MegaCoreX", "megatinycore") else "codesize",
+    "append" if core in ("MegaCoreX", "megatinycore") else "codesize",
     "bootend" if core in ("MegaCoreX", "megatinycore") else "bootsize"
 )
 
