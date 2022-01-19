@@ -2,7 +2,6 @@ import sys
 import os
 
 from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, Import, Return
-from platformio.util import get_serial_ports
 
 Import("env")
 
@@ -255,7 +254,6 @@ else:
     )
 
 print_fuses_info(fuse_values, fuse_names, lock_fuse)
-
 
 fuses_action = env.VerboseAction("$SETFUSESCMD", "Setting fuses...")
 
