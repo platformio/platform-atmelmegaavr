@@ -236,7 +236,7 @@ if int(ARGUMENTS.get("PIOVERBOSE", 0)):
     env.Append(FUSESUPLOADERFLAGS=["-v"])
 
 # Add upload serial port to Avrdude flags list if a jtag2updi programmer
-if env.subst("$UPLOAD_PROTOCOL") == "jtag2updi":
+if env.subst("$UPLOAD_PROTOCOL") in ("jtag2updi", "serialupdi"):
     env.AutodetectUploadPort()
     env.Append(FUSESUPLOADERFLAGS=["-P", '"$UPLOAD_PORT"'])
 else:
