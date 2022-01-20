@@ -169,10 +169,13 @@ target_size = env.AddPlatformTarget(
 # Target: Setup fuses
 #
 
-fuses_action = None
+fuses_actions = None
 if "fuses" in COMMAND_LINE_TARGETS:
-    fuses_action = env.SConscript("fuses.py", exports="env")
-env.AddPlatformTarget("fuses", None, fuses_action, "Set Fuses")
+    fuses_actions = [
+        env.VerboseAction(BeforeUpload, "Looking for port..."),
+        env.SConscript("fuses.py", exports="env")
+    ]
+env.AddPlatformTarget("fuses", None, fuses_actions, "Set Fuses")
 
 #
 # Target: Upload bootloader
@@ -198,11 +201,8 @@ else:
     ]
 
     upload_options = env.BoardConfig().get("upload", {})
-    # jtag2updi seems to be the only protocol that requires serial port
-    if upload_protocol == "jtag2updi":
+    if upload_protocol in ("jtag2updi", "serialupdi"):
         upload_options["require_upload_port"] = True
-        upload_options["use_1200bps_touch"] = True
-        upload_options["wait_for_upload_port"] = False
     elif upload_protocol == "arduino":
         upload_options["require_upload_port"] = True
         upload_options["use_1200bps_touch"] = False

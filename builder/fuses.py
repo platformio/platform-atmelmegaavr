@@ -107,7 +107,7 @@ def get_bootend_fuse(uart):
 
 
 def get_lockbit_fuse():
-    if core in ("MegaCoreX", "megatinycore"):
+    if core in ("arduino", "MegaCoreX", "megatinycore"):
         return 0xC5
     elif core == "dxcore":
         return 0x5CC5C55C
@@ -244,12 +244,14 @@ if lock_fuse:
 if int(ARGUMENTS.get("PIOVERBOSE", 0)):
     env.Append(FUSESUPLOADERFLAGS=["-v"])
 
-if not env.BoardConfig().get("upload", {}).get("require_upload_port", False):
-    # upload methods via USB
-    env.Append(FUSESUPLOADERFLAGS=["-P", "usb"])
-else:
+# Add upload serial port to Avrdude flags list if a jtag2updi programmer
+if env.subst("$UPLOAD_PROTOCOL") in ("jtag2updi", "serialupdi"):
     env.AutodetectUploadPort()
     env.Append(FUSESUPLOADERFLAGS=["-P", '"$UPLOAD_PORT"'])
+else:
+    # upload methods via USB
+    env.Append(FUSESUPLOADERFLAGS=["-P", "usb"])
+
 
 if env.subst("$UPLOAD_PROTOCOL") != "custom":
     env.Append(FUSESUPLOADERFLAGS=["-c", "$UPLOAD_PROTOCOL"])
