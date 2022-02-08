@@ -1,7 +1,7 @@
 {
   "build": {
     "core": "megatinycore",
-    "extra_flags": "-DARDUINO_attinyxy6 -DMILLIS_USE_TIMERD0 -DUARTBAUD5V",
+    "extra_flags": "-DARDUINO_attinyxy6 -DMILLIS_USE_TIMERB1 -DUARTBAUD5V",
     "f_cpu": "16000000L",
     "mcu": "attiny826",
     "variant": "txy6"
