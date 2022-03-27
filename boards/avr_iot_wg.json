@@ -16,7 +16,7 @@
   "upload": {
     "maximum_ram_size": 6144,
     "maximum_size": 49152,
-    "protocol": "curiosity_updi"
+    "protocol": "pkobn_updi"
   },
   "url": "https://www.microchip.com/developmenttools/ProductDetails/AC164160",
   "vendor": "Microchip"
