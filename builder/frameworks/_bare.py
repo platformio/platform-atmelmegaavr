@@ -20,21 +20,27 @@ from SCons.Script import Import
 
 Import("env")
 
+machine_flags = [
+    "-mmcu=$BOARD_MCU",
+]
+
 env.Append(
-    ASFLAGS=["-x", "assembler-with-cpp"],
+    ASFLAGS=machine_flags,
+    ASPPFLAGS=[
+        "-x", "assembler-with-cpp",
+    ],
 
     CFLAGS=[
         "-std=gnu11",
         "-fno-fat-lto-objects"
     ],
 
-    CCFLAGS=[
+    CCFLAGS=machine_flags + [
         "-Os",
         "-w",
         "-ffunction-sections",
         "-fdata-sections",
         "-flto",
-        "-mmcu=$BOARD_MCU"
     ],
 
     CPPDEFINES=[
@@ -49,10 +55,9 @@ env.Append(
         "-Wno-error=narrowing"
     ],
 
-    LINKFLAGS=[
+    LINKFLAGS=machine_flags + [
         "-Os",
         "-flto",
-        "-mmcu=$BOARD_MCU",
         "-Wl,--gc-sections",
         "-Wl,--section-start=.text=%s"
         % (
@@ -65,6 +70,3 @@ env.Append(
 
     LIBS=["m"]
 )
-
-# copy CCFLAGS to ASFLAGS (-x assembler-with-cpp mode)
-env.Append(ASFLAGS=env.get("CCFLAGS", [])[:])
