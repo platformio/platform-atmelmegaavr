@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.managers.platform import PlatformBase
+from platformio.public import PlatformBase
 
 
 class AtmelmegaavrPlatform(PlatformBase):
 
     def configure_default_packages(self, variables, targets):
         if not variables.get("board"):
-            return super(AtmelmegaavrPlatform, self).configure_default_packages(
+            return super().configure_default_packages(
                 variables, targets)
 
         build_core = variables.get(
@@ -39,5 +39,5 @@ class AtmelmegaavrPlatform(PlatformBase):
         if any(t in targets for t in ("fuses", "bootloader")):
             self.packages["tool-avrdude-megaavr"]["optional"] = False
 
-        return super(AtmelmegaavrPlatform, self).configure_default_packages(
+        return super().configure_default_packages(
             variables, targets)

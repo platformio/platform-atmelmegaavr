@@ -18,7 +18,7 @@ from os.path import join
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, AlwaysBuild,
                           Builder, Default, DefaultEnvironment)
 
-from platformio.util import get_serial_ports
+from platformio.public import list_serial_ports
 
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
@@ -41,7 +41,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
     env.Append(UPLOADERFLAGS=["-P", '"$UPLOAD_PORT"'])
 
-    before_ports = get_serial_ports()
+    before_ports = list_serial_ports()
 
     if upload_options.get("use_1200bps_touch", False):
         env.TouchSerialPort("$UPLOAD_PORT", 1200)
