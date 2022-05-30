@@ -12,13 +12,13 @@
     "8-bit"
   ],
   "engines": {
-    "platformio": "^5"
+    "platformio": "^6"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/platformio/platform-atmelmegaavr.git"
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-megaavr",
@@ -30,7 +30,7 @@
       "type": "toolchain",
       "owner": "platformio",
       "version": "~1.70300.0",
-      "optionalVersions": ["~2.70300.0"]
+      "optionalVersions": ["~3.70300.0"]
     },
     "framework-arduino-megaavr": {
       "type": "framework",
@@ -42,20 +42,25 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~1.0.7"
+      "version": "~1.0.10"
     },
     "framework-arduino-megaavr-megatinycore": {
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~2.4.0"
+      "version": "~2.5.0"
+    },
+    "framework-arduino-megaavr-dxcore": {
+      "type": "framework",
+      "optional": true,
+      "version": "~1.4.5"
     },
     "tool-avrdude-megaavr": {
       "type": "uploader",
       "optional": true,
       "owner": "platformio",
       "version": "~1.60300.0",
-      "optionalVersions": ["~2.60300.0"]
+      "optionalVersions": ["~3.60300.0"]
     }
   }
 }
