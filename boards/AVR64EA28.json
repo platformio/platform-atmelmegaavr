@@ -1,0 +1,24 @@
+{
+  "build": {
+    "core": "dxcore",
+    "extra_flags": "-DARDUINO_AVR_AVR64EA28 -DARDUINO_avrea",
+    "f_cpu": "24000000L",
+    "mcu": "avr64ea28",
+    "variant": "28pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "AVR64EA28",
+  "upload": {
+    "maximum_ram_size": 8192,
+    "maximum_size": 65536,
+    "protocol": "jtag2updi",
+    "speed": 115200
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/AVR64EA28",
+  "vendor": "Microchip"
+}
