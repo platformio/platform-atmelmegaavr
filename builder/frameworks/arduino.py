@@ -118,7 +118,7 @@ if build_core in ("dxcore", "megatinycore"):
         env.Append(
             CPPDEFINES=[
                 "TWI_MORS_SINGLE",
-                "MILLIS_USE_TIMERB2",
+                "MILLIS_USE_TIMER" + board.get("build.millistimer"),
             ],
             LINKFLAGS=[
                 "-mrelax",

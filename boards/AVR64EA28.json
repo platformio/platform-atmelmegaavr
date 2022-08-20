@@ -4,7 +4,8 @@
     "extra_flags": "-DARDUINO_AVR_AVR64EA28 -DARDUINO_avrea",
     "f_cpu": "24000000L",
     "mcu": "avr64ea28",
-    "variant": "28pin-standard"
+    "variant": "28pin-standard",
+    "millistimer": "B2"
   },
   "hardware": {
     "oscillator": "internal"
