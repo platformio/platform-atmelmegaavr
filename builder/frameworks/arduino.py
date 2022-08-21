@@ -119,6 +119,7 @@ if build_core in ("dxcore", "megatinycore"):
             CPPDEFINES=[
                 "TWI_MORS_SINGLE",
                 "MILLIS_USE_TIMER" + board.get("build.millistimer"),
+                "USING_OPTIBOOT",
             ],
             LINKFLAGS=[
                 "-mrelax",
