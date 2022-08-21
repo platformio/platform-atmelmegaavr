@@ -4,11 +4,11 @@
     "extra_flags": "-DARDUINO_AVR_AVR32DB32 -DARDUINO_avrdb",
     "f_cpu": "24000000L",
     "mcu": "avr32db32",
-    "variant": "32pin-standard",
-    "millistimer": "B2"
+    "variant": "32pin-standard"
   },
   "hardware": {
-    "oscillator": "internal"
+    "oscillator": "internal",
+    "millistimer": "B2"
   },
   "frameworks": [
     "arduino"

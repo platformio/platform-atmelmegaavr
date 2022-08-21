@@ -4,11 +4,11 @@
     "extra_flags": "-DARDUINO_AVR_AVR16DD20 -DARDUINO_avrdd",
     "f_cpu": "24000000L",
     "mcu": "avr16dd20",
-    "variant": "20pin-standard",
-    "millistimer": "B1"
+    "variant": "20pin-standard"
   },
   "hardware": {
-    "oscillator": "internal"
+    "oscillator": "internal",
+    "millistimer": "B1"
   },
   "frameworks": [
     "arduino"

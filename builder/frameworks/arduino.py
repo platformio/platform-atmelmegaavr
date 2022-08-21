@@ -118,7 +118,7 @@ if build_core in ("dxcore", "megatinycore"):
         env.Append(
             CPPDEFINES=[
                 "TWI_MORS_SINGLE",
-                "MILLIS_USE_TIMER" + board.get("build.millistimer"),
+                "MILLIS_USE_TIMER" + board.get("hardware.millistimer"),
                 "USING_OPTIBOOT",
             ],
             LINKFLAGS=[
