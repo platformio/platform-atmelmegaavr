@@ -8,7 +8,6 @@
   },
   "hardware": {
     "oscillator": "internal",
-    "millistimer": "B2",
     "uart": "ser1"
   },
   "frameworks": [

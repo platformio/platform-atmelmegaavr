@@ -7,8 +7,7 @@
     "variant": "28pin-standard"
   },
   "hardware": {
-    "oscillator": "internal",
-    "millistimer": "B2"
+    "oscillator": "internal"
   },
   "frameworks": [
     "arduino"
