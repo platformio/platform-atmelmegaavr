@@ -22,6 +22,8 @@ kinds of creative coding, interactive objects, spaces or physical experiences.
 http://arduino.cc/en/Reference/HomePage
 """
 
+import re
+
 from os.path import isdir, join
 
 from SCons.Script import DefaultEnvironment
@@ -115,11 +117,15 @@ if build_core in ("dxcore", "megatinycore"):
             ],
         )
     elif build_core == "dxcore":
+        uart = board.get("hardware.uart", "ser0")
+        uart = re.match(r"(ser|uart)(\d)", uart).group(2)
+        timer = board.get("hardware.millistimer", "B2")
         env.Append(
             CPPDEFINES=[
                 "TWI_MORS_SINGLE",
-                "MILLIS_USE_TIMER" + board.get("hardware.millistimer", "B2"),
+                "MILLIS_USE_TIMER" + timer,
                 "USING_OPTIBOOT",
+                "Serial=Serial" + uart,
             ],
             LINKFLAGS=[
                 "-mrelax",

@@ -30,12 +30,12 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
     if uart == "no_bootloader":
         return ""
 
-    bootloader_led = board_config.get("bootloader.led_pin", "A7").upper()
-    bootloader_speed = board_config.get("bootloader.speed", env.subst("$UPLOAD_SPEED"))
-
     if core == "MegaCoreX":
         if not uart.endswith(("_alt", "_def")):
             uart = uart + "_def"
+
+        bootloader_led = board_config.get("bootloader.led_pin", "A7").upper()
+        bootloader_speed = board_config.get("bootloader.speed", env.subst("$UPLOAD_SPEED"))
         bootloader_file = "Optiboot_mega0_%s_%s_%s.hex" % (
             uart.upper(), bootloader_speed, bootloader_led)
 
@@ -48,8 +48,7 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
         uart = uart.lower().replace("uart", "ser")
         bootloader_file = "optiboot_dx%s_%s.hex" % (mcu_size, uart)
         bootloader_path = os.path.join(
-            framework_dir, "bootloaders", "hex",
-            bootloader_speed, bootloader_file
+            framework_dir, "bootloaders", "hex", bootloader_file
         )
 
     return bootloader_path
