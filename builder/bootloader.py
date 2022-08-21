@@ -14,6 +14,7 @@
 
 import sys
 import os
+import re
 
 from SCons.Script import Import, Return
 
@@ -43,8 +44,9 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
             bootloader_speed, bootloader_file
         )
     else: # dxcore
-        bootloader_file = "Optiboot_dx%s_%s.hex" % (
-            '64', uart.upper())
+        mcu_size = re.match(r'avr(\d+)', board.get("build.mcu")).group(1)
+        bootloader_file = "optiboot_dx%s_%s.hex" % (
+            mcu_size, uart.lower())
         bootloader_path = os.path.join(
             framework_dir, "bootloaders", "hex",
             bootloader_speed, bootloader_file
