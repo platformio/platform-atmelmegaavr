@@ -51,6 +51,8 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
             framework_dir, "bootloaders", "hex", bootloader_file
         )
 
+    print('Using bootloader', bootloader_file)
+
     return bootloader_path
 
 
