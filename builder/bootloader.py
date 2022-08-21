@@ -43,10 +43,10 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
             framework_dir, "bootloaders", "optiboot", "bootloaders", "mega0",
             bootloader_speed, bootloader_file
         )
-    else: # dxcore
+    else:  # dxcore
         mcu_size = re.match(r'avr(\d+)', board.get("build.mcu")).group(1)
-        bootloader_file = "optiboot_dx%s_%s.hex" % (
-            mcu_size, uart.lower())
+        uart = uart.lower().replace("uart", "ser")
+        bootloader_file = "optiboot_dx%s_%s.hex" % (mcu_size, uart)
         bootloader_path = os.path.join(
             framework_dir, "bootloaders", "hex",
             bootloader_speed, bootloader_file
