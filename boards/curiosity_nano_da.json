@@ -1,7 +1,7 @@
 {
   "build": {
     "core": "dxcore",
-    "extra_flags": "-DARDUINO_AVR_AVR128DA48 -DARDUINO_avrda -DLED_BUILTIN=PIN_PC6",
+    "extra_flags": "-DARDUINO_AVR_AVR128DA48 -DARDUINO_avrda -DLED_BUILTIN=PIN_PC6 -DSerial=Serial1",
     "f_cpu": "24000000L",
     "mcu": "avr128da48",
     "variant": "48pin-standard"
