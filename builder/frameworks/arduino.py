@@ -124,11 +124,12 @@ if build_core in ("dxcore", "megatinycore"):
         bootloader = board.get("hardware.uart", "no_bootloader").lower()
         optiboot = "USING_OPTIBOOT" if bootloader != "no_bootloader" else ""
 
-        mvio = "MVIO_ENABLED" if \
-            build_core == "dxcore" and \
-            "db" in board.get("build.mcu").lower() and \
-            board.get("hardware.mvio_enable", "no").lower() == "yes" \
-            else ""
+        mvio = ""
+        if board.get("hardware.mvio_enable", "no").lower() == "yes":
+            if "db" in board.get("build.mcu").lower():
+                mvio = "MVIO_ENABLED"
+            else:
+                pass # MVIO is not supported
 
         env.Append(
             CPPDEFINES=[
