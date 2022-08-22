@@ -120,12 +120,19 @@ if build_core in ("dxcore", "megatinycore"):
         uart = board.get("hardware.uart", "ser0")
         uart = re.match(r"(ser|uart)(\d)", uart).group(2)
         timer = board.get("hardware.millistimer", "B2")
+        mvio = "MVIO_ENABLED" if \
+            build_core == "dxcore" and \
+            "db" in board.get("build.mcu").lower() and \
+            board.get("hardware.mvio_enable", "no").lower() == "yes" \
+            else ""
+
         env.Append(
             CPPDEFINES=[
                 "TWI_MORS_SINGLE",
                 "MILLIS_USE_TIMER" + timer,
                 "USING_OPTIBOOT",
                 "Serial=Serial" + uart,
+                mvio,
             ],
             LINKFLAGS=[
                 "-mrelax",
