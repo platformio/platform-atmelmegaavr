@@ -4,7 +4,7 @@
     "extra_flags": "-DARDUINO_AVR_AVR32DD28 -DARDUINO_avrdd",
     "f_cpu": "24000000L",
     "mcu": "avr32dd28",
-    "variant": "28pin-standard"
+    "variant": "28pin-ddseries"
   },
   "hardware": {
     "oscillator": "internal"
