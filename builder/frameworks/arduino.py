@@ -116,7 +116,7 @@ if build_core in ("dxcore", "megatinycore"):
         )
     elif build_core == "dxcore":
         timer = board.get("hardware.millistimer", "B2")
-        bootloader = board.get("hardware.uart", "ser0").lower()
+        bootloader = board.get("hardware.uart", "no_bootloader").lower()
         optiboot = "USING_OPTIBOOT" if bootloader != "no_bootloader" else ""
 
         mvio = "MVIO_ENABLED" if \
