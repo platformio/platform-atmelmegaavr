@@ -76,7 +76,7 @@ env.Replace(
         join(
             env.PioPlatform().get_package_dir(
                 "tool-avrdude"
-                if env.BoardConfig().get("build.core", "") == "MegaCoreX"
+                if env.BoardConfig().get("build.core", "") in ("MegaCoreX", "megatinycore")
                 else "tool-avrdude-megaavr"
             )
             or "",
