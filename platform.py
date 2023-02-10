@@ -32,7 +32,7 @@ class AtmelmegaavrPlatform(PlatformBase):
             self.packages[framework_package]["optional"] = False
             self.packages["framework-arduino-megaavr"]["optional"] = True
 
-            if build_core in ("MegaCoreX", "megatinycore"):
+            if build_core in ("MegaCoreX", "megatinycore", "dxcore"):
                 # MegaCoreX and megatinycore require AVRDUDE v7.1 currently available
                 # only in atmelavr platform
                 self.packages.pop("tool-avrdude-megaavr", None)
@@ -47,7 +47,7 @@ class AtmelmegaavrPlatform(PlatformBase):
                 self.packages["toolchain-atmelavr"]["version"] = "~3.70300.0"
 
         if any(t in targets for t in ("fuses", "bootloader")):
-            if build_core in ("MegaCoreX", "megatinycore"):
+            if build_core in ("MegaCoreX", "megatinycore", "dxcore"):
                 self.packages["tool-avrdude"]["optional"] = False
             else:
                 self.packages["tool-avrdude-megaavr"]["optional"] = False

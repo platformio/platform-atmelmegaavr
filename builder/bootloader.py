@@ -95,7 +95,7 @@ env.Append(
         "-C",
         os.path.join(
             env.PioPlatform().get_package_dir(
-                "tool-avrdude" if core in ("MegaCoreX", "megatinycore") else "tool-avrdude-megaavr"
+                "tool-avrdude" if core in ("MegaCoreX", "megatinycore", "dxcore") else "tool-avrdude-megaavr"
             )
             or "",
             "avrdude.conf",
