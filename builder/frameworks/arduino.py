@@ -26,6 +26,8 @@ from os.path import isdir, join
 
 from SCons.Script import DefaultEnvironment
 
+from platformio.package.version import pepver_to_semver
+
 env = DefaultEnvironment()
 platform = env.PioPlatform()
 board = env.BoardConfig()
@@ -83,19 +85,18 @@ elif oscillator_type == "external" and build_core == "MegaCoreX":
 #
 
 if build_core in ("dxcore", "megatinycore"):
-    package_version = platform.get_package_version(
+    package_version = pepver_to_semver(platform.get_package_version(
         "framework-arduino-megaavr-%s" % build_core
-    )
-    major, minor, patch = package_version.split(".")
+    ))
 
     core_macro_name = build_core.upper()
     env.Append(
         CCFLAGS=["-mrelax"],
         CPPDEFINES=[
             (core_macro_name, '\\"%s\\"' % package_version),
-            ("%s_MAJOR" % core_macro_name, "%sUL" % major),
-            ("%s_MINOR" % core_macro_name, "%sUL" % minor),
-            ("%s_PATCH" % core_macro_name, "%sUL" % patch),
+            ("%s_MAJOR" % core_macro_name, "%sUL" % package_version.major),
+            ("%s_MINOR" % core_macro_name, "%sUL" % package_version.minor),
+            ("%s_PATCH" % core_macro_name, "%sUL" % package_version.patch),
             ("%s_RELEASED" % core_macro_name, 1),
             "CORE_ATTACH_ALL",
         ]

@@ -93,8 +93,13 @@ env.Append(
         "-p",
         "$BOARD_MCU",
         "-C",
-        os.path.join(env.PioPlatform().get_package_dir(
-            "tool-avrdude-megaavr") or "", "avrdude.conf"),
+        os.path.join(
+            env.PioPlatform().get_package_dir(
+                "tool-avrdude" if core in ("MegaCoreX", "megatinycore") else "tool-avrdude-megaavr"
+            )
+            or "",
+            "avrdude.conf",
+        ),
     ],
     BOOTFLAGS=["-U", "flash:w:%s:i" % bootloader_path],
     UPLOADBOOTCMD="$BOOTUPLOADER $BOOTUPLOADERFLAGS $UPLOAD_FLAGS $BOOTFLAGS",

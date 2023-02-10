@@ -223,7 +223,10 @@ env.Append(
         "$BOARD_MCU",
         "-C",
         os.path.join(
-            env.PioPlatform().get_package_dir("tool-avrdude-megaavr") or "",
+            env.PioPlatform().get_package_dir(
+                "tool-avrdude" if core in ("MegaCoreX", "megatinycore") else "tool-avrdude-megaavr"
+            )
+            or "",
             "avrdude.conf",
         ),
     ],

@@ -73,8 +73,15 @@ env.Replace(
     UPLOADER="avrdude",
     UPLOADERFLAGS=[
         "-p", "$BOARD_MCU", "-C",
-        join(env.PioPlatform().get_package_dir(
-            "tool-avrdude-megaavr") or "", "avrdude.conf"),
+        join(
+            env.PioPlatform().get_package_dir(
+                "tool-avrdude"
+                if env.BoardConfig().get("build.core", "") in ("MegaCoreX", "megatinycore")
+                else "tool-avrdude-megaavr"
+            )
+            or "",
+            "avrdude.conf",
+        ),
         "-c", "$UPLOAD_PROTOCOL"
     ],
     UPLOADCMD="$UPLOADER $UPLOADERFLAGS -U flash:w:$SOURCES:i",
