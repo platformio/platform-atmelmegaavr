@@ -30,6 +30,7 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
     if uart == "no_bootloader":
         return ""
 
+    bootloader_file = ""
     if core == "MegaCoreX":
         if not uart.endswith(("_alt", "_def")):
             uart = uart + "_def"
@@ -43,7 +44,7 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
             framework_dir, "bootloaders", "optiboot", "bootloaders", "mega0",
             bootloader_speed, bootloader_file
         )
-    else:  # dxcore
+    elif core == "dxcore":
         mcu_size = re.match(r'avr(\d+)', board.get("build.mcu")).group(1)
         uart = uart.lower().replace("uart", "ser")
         bootloader_file = "optiboot_dx%s_%s.hex" % (mcu_size, uart)
@@ -51,7 +52,7 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
             framework_dir, "bootloaders", "hex", bootloader_file
         )
 
-    print('Using bootloader', bootloader_file)
+    print("Using bootloader `%s`" % bootloader_file)
 
     return bootloader_path
 
@@ -66,7 +67,7 @@ if env.get("PIOFRAMEWORK", []):
 #
 
 bootloader_path = board.get("bootloader.file", "")
-if core in ["MegaCoreX", "dxcore"]:
+if core in ("MegaCoreX", "dxcore"):
     if not os.path.isfile(bootloader_path):
         if board.get("hardware.uart", "no_bootloader").lower() == "no_bootloader":
             sys.stderr.write("Error: `no bootloader` selected in board config!\n")
