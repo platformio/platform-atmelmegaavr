@@ -14,7 +14,6 @@
 
 import sys
 import os
-import re
 
 from SCons.Script import Import, Return
 
@@ -29,30 +28,36 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
     uart = board_config.get("hardware.uart", "no_bootloader").lower()
     if uart == "no_bootloader":
         return ""
+    if not uart.endswith(("_alt", "_def")):
+        uart = uart + "_def"
 
-    bootloader_file = ""
-    if core == "MegaCoreX":
-        if not uart.endswith(("_alt", "_def")):
-            uart = uart + "_def"
+    bootloader_led = board_config.get("bootloader.led_pin", "A7").upper()
+    bootloader_speed = board_config.get("bootloader.speed", env.subst("$UPLOAD_SPEED"))
+    bootloader_file = "Optiboot_mega0_%s_%s_%s.hex" % (
+        uart.upper(), bootloader_speed, bootloader_led)
 
-        bootloader_led = board_config.get("bootloader.led_pin", "A7").upper()
-        bootloader_speed = board_config.get("bootloader.speed", env.subst("$UPLOAD_SPEED"))
-        bootloader_file = "Optiboot_mega0_%s_%s_%s.hex" % (
-            uart.upper(), bootloader_speed, bootloader_led)
+    bootloader_path = os.path.join(
+        framework_dir, "bootloaders", "optiboot", "bootloaders", "mega0",
+        bootloader_speed, bootloader_file
+    )
 
-        bootloader_path = os.path.join(
-            framework_dir, "bootloaders", "optiboot", "bootloaders", "mega0",
-            bootloader_speed, bootloader_file
-        )
-    elif core == "dxcore":
-        mcu_size = re.match(r'avr(\d+)', board.get("build.mcu")).group(1)
-        uart = uart.lower().replace("uart", "ser")
-        bootloader_file = "optiboot_dx%s_%s.hex" % (mcu_size, uart)
-        bootloader_path = os.path.join(
-            framework_dir, "bootloaders", "hex", bootloader_file
-        )
+    return bootloader_path
 
-    print("Using bootloader `%s`" % bootloader_file)
+
+def get_bootloader_dxcore(framework_dir, board_config):
+    # print(json.dumps(board_config.manifest, indent=2)) # print board config content
+    port = board_config.get("bootloader.port", "no_bootloader").lower()
+    if port == "no_bootloader":
+        return ""
+
+    btld = board_config.get("bootloader.class")
+    entry = board_config.get("bootloader.entrycond", "extr") # use "extr" by default
+    bootloader_file = f"{btld}_{port}_{entry}.hex"
+    bootloader_path = os.path.join(
+        framework_dir, "bootloaders", "hex", bootloader_file
+    )
+
+    print('Using bootloader', bootloader_file)
 
     return bootloader_path
 
@@ -67,12 +72,18 @@ if env.get("PIOFRAMEWORK", []):
 #
 
 bootloader_path = board.get("bootloader.file", "")
-if core in ("MegaCoreX", "dxcore"):
+if core == "MegaCoreX":
     if not os.path.isfile(bootloader_path):
         if board.get("hardware.uart", "no_bootloader").lower() == "no_bootloader":
             sys.stderr.write("Error: `no bootloader` selected in board config!\n")
             env.Exit(1)
         bootloader_path = get_suitable_optiboot_binary(framework_dir, board)
+elif core ==  "dxcore":
+    if not os.path.isfile(bootloader_path):
+        if board.get("bootloader.port", "no_bootloader").lower() == "no_bootloader":
+            sys.stderr.write("Error: `no bootloader` selected in board config!\n")
+            env.Exit(1)
+        bootloader_path = get_bootloader_dxcore(framework_dir, board)
 else:
     if not os.path.isfile(bootloader_path):
         bootloader_path = os.path.join(framework_dir, "bootloaders", bootloader_path)
