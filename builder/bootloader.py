@@ -62,7 +62,10 @@ def get_bootloader_dxcore(framework_dir, board_config):
         bootloader_file = f"{btld}_{port}.hex"
 
     bootloader_path = os.path.join(
-        framework_dir, "bootloaders", "hex", bootloader_file
+        framework_dir,
+        "bootloaders",
+        "hex",
+        bootloader_file,
     )
 
     sys.stdout.write(f"Using bootloader {bootloader_file}\n")
@@ -86,7 +89,7 @@ if core == "MegaCoreX":
             sys.stderr.write("Error: `no bootloader` selected in board config!\n")
             env.Exit(1)
         bootloader_path = get_suitable_optiboot_binary(framework_dir, board)
-elif core ==  "dxcore":
+elif core == "dxcore":
     if not os.path.isfile(bootloader_path):
         bootloader_path = get_bootloader_dxcore(framework_dir, board)
 else:
@@ -112,7 +115,9 @@ env.Append(
         "-C",
         os.path.join(
             env.PioPlatform().get_package_dir(
-                "tool-avrdude" if core in ("MegaCoreX", "megatinycore", "dxcore") else "tool-avrdude-megaavr"
+                "tool-avrdude"
+                if core in ("MegaCoreX", "megatinycore", "dxcore")
+                else "tool-avrdude-megaavr"
             )
             or "",
             "avrdude.conf",
