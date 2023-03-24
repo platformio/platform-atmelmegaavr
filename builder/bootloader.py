@@ -45,19 +45,27 @@ def get_suitable_optiboot_binary(framework_dir, board_config):
 
 
 def get_bootloader_dxcore(framework_dir, board_config):
-    # print(json.dumps(board_config.manifest, indent=2)) # print board config content
-    port = board_config.get("bootloader.port", "no_bootloader").lower()
-    if port == "no_bootloader":
-        return ""
+    btld = board_config.get("bootloader.class", "")
+    port = board_config.get("bootloader.port", "")
+    entry = board_config.get("bootloader.entrycond", "")
 
-    btld = board_config.get("bootloader.class")
-    entry = board_config.get("bootloader.entrycond", "extr") # use "extr" by default
-    bootloader_file = f"{btld}_{port}_{entry}.hex"
+    if not btld:
+        sys.stderr.write("Error: invalid `bootloader.class` in board config!\n")
+        env.Exit(1)
+    if not port:
+        sys.stderr.write("Error: invalid `bootloader.port` in board config!\n")
+        env.Exit(1)
+
+    if entry:
+        bootloader_file = f"{btld}_{port}_{entry}.hex"
+    else:
+        bootloader_file = f"{btld}_{port}.hex"
+
     bootloader_path = os.path.join(
         framework_dir, "bootloaders", "hex", bootloader_file
     )
 
-    print('Using bootloader', bootloader_file)
+    sys.stdout.write(f"Using bootloader {bootloader_file}\n")
 
     return bootloader_path
 
@@ -80,9 +88,6 @@ if core == "MegaCoreX":
         bootloader_path = get_suitable_optiboot_binary(framework_dir, board)
 elif core ==  "dxcore":
     if not os.path.isfile(bootloader_path):
-        if board.get("bootloader.port", "no_bootloader").lower() == "no_bootloader":
-            sys.stderr.write("Error: `no bootloader` selected in board config!\n")
-            env.Exit(1)
         bootloader_path = get_bootloader_dxcore(framework_dir, board)
 else:
     if not os.path.isfile(bootloader_path):
