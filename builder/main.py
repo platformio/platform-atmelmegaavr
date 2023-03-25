@@ -51,6 +51,29 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
 
 env = DefaultEnvironment()
+def _have_avrdude(env):
+    for i in env.PioPlatform().get_installed_packages():
+        if i.metadata.name == 'tool-avrdude': return True
+    return False
+
+if _have_avrdude(env):
+    env.Replace(
+        UPLOADER="avrdude",
+        UPLOADERFLAGS=[
+            "-p", "$BOARD_MCU", "-C",
+            join(
+                env.PioPlatform().get_package_dir(
+                    "tool-avrdude"
+                    if env.BoardConfig().get("build.core", "") in ("MegaCoreX", "megatinycore")
+                    else "tool-avrdude-megaavr"
+                )
+                or "",
+                "avrdude.conf",
+            ),
+            "-c", "$UPLOAD_PROTOCOL"
+        ],
+        UPLOADCMD="$UPLOADER $UPLOADERFLAGS -U flash:w:$SOURCES:i",
+    )
 
 env.Replace(
     AR="avr-gcc-ar",
@@ -69,22 +92,6 @@ env.Replace(
     SIZEEEPROMREGEXP=r"^(?:\.eeprom)\s+([0-9]+).*",
     SIZECHECKCMD="$SIZETOOL -A -d $SOURCES",
     SIZEPRINTCMD='$SIZETOOL --mcu=$BOARD_MCU -C -d $SOURCES',
-
-    UPLOADER="avrdude",
-    UPLOADERFLAGS=[
-        "-p", "$BOARD_MCU", "-C",
-        join(
-            env.PioPlatform().get_package_dir(
-                "tool-avrdude"
-                if env.BoardConfig().get("build.core", "") in ("MegaCoreX", "megatinycore")
-                else "tool-avrdude-megaavr"
-            )
-            or "",
-            "avrdude.conf",
-        ),
-        "-c", "$UPLOAD_PROTOCOL"
-    ],
-    UPLOADCMD="$UPLOADER $UPLOADERFLAGS -U flash:w:$SOURCES:i",
 
     PROGSUFFIX=".elf"
 )
