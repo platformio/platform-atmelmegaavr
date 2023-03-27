@@ -53,7 +53,7 @@
     "framework-arduino-megaavr-dxcore": {
       "type": "framework",
       "optional": true,
-      "version": "~1.4.5"
+      "version": "~1.5.6"
     },
     "tool-avrdude-megaavr": {
       "type": "uploader",
