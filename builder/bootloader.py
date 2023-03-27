@@ -56,10 +56,7 @@ def get_bootloader_dxcore(framework_dir, board_config):
         sys.stderr.write("Error: invalid `bootloader.port` in board config!\n")
         env.Exit(1)
 
-    if entry:
-        bootloader_file = f"{btld}_{port}_{entry}.hex"
-    else:
-        bootloader_file = f"{btld}_{port}.hex"
+    bootloader_file = f"{btld}_{port}_{entry}.hex" if entry else f"{btld}_{port}.hex"
 
     bootloader_path = os.path.join(
         framework_dir,
@@ -68,7 +65,7 @@ def get_bootloader_dxcore(framework_dir, board_config):
         bootloader_file,
     )
 
-    sys.stdout.write(f"Using bootloader {bootloader_file}\n")
+    print(f"Using bootloader `{bootloader_file}`.")
 
     return bootloader_path
 

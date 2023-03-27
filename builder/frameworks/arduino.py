@@ -121,23 +121,20 @@ if build_core in ("dxcore", "megatinycore"):
             ],
         )
     elif build_core == "dxcore":
-        timer = board.get("hardware.millistimer", "B2")
         bootloader = board.get("hardware.uart", "no_bootloader").lower()
-        optiboot = "USING_OPTIBOOT" if bootloader != "no_bootloader" else ""
+        optiboot = "" if bootloader != "no_bootloader" else ""
 
-        mvio = ""
         if board.get("hardware.mvio_enable", "no").lower() == "yes":
             if "db" in board.get("build.mcu").lower():
-                mvio = "MVIO_ENABLED"
-            else:
-                pass # MVIO is not supported
+                env.Append(CPPDEFINES=["MVIO_ENABLED"])
+
+        if bootloader != "no_bootloader":
+            env.Append(CPPDEFINES=["USING_OPTIBOOT"])
 
         env.Append(
             CPPDEFINES=[
                 "TWI_MORS_SINGLE",
-                "MILLIS_USE_TIMER" + timer,
-                optiboot,
-                mvio,
+                "MILLIS_USE_TIMER" + board.get("hardware.millistimer", "B2"),
             ],
             LINKFLAGS=[
                 "-mrelax",
