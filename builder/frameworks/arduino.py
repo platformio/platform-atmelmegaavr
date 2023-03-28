@@ -71,7 +71,12 @@ env.Append(
 
 oscillator_type = board.get("hardware", {}).get("oscillator", "internal")
 if build_core in ("megatinycore", "dxcore"):
-    env.Append(CPPDEFINES=[("CLOCK_SOURCE", 2 if oscillator_type == "external" else 0)])
+    if oscillator_type == "external":
+        env.Append(CPPDEFINES=[("CLOCK_SOURCE", 2)])
+    elif oscillator_type == "crystal":
+        env.Append(CPPDEFINES=[("CLOCK_SOURCE", 1)])
+    else:
+        env.Append(CPPDEFINES=[("CLOCK_SOURCE", 0)])
 elif oscillator_type == "external" and build_core == "MegaCoreX":
     env.Append(CPPDEFINES=["USE_EXTERNAL_OSCILLATOR"])
 
@@ -116,10 +121,20 @@ if build_core in ("dxcore", "megatinycore"):
             ],
         )
     elif build_core == "dxcore":
+        bootloader = board.get("hardware.uart", "no_bootloader").lower()
+        optiboot = "" if bootloader != "no_bootloader" else ""
+
+        if board.get("hardware.mvio_enable", "no").lower() == "yes":
+            if "db" in board.get("build.mcu").lower():
+                env.Append(CPPDEFINES=["MVIO_ENABLED"])
+
+        if bootloader != "no_bootloader":
+            env.Append(CPPDEFINES=["USING_OPTIBOOT"])
+
         env.Append(
             CPPDEFINES=[
                 "TWI_MORS_SINGLE",
-                "MILLIS_USE_TIMERB2",
+                "MILLIS_USE_TIMER" + board.get("hardware.millistimer", "B2"),
             ],
             LINKFLAGS=[
                 "-mrelax",
