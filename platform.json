@@ -18,7 +18,7 @@
     "type": "git",
     "url": "https://github.com/platformio/platform-atmelmegaavr.git"
   },
-  "version": "1.8.0",
+  "version": "1.9.0",
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-megaavr",
@@ -36,19 +36,19 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~1.8.7"
+      "version": "~1.8.8"
     },
     "framework-arduino-megaavr-megacorex": {
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~1.1.1"
+      "version": "~1.1.2"
     },
     "framework-arduino-megaavr-megatinycore": {
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~2.6.5"
+      "version": "~2.6.7"
     },
     "framework-arduino-megaavr-dxcore": {
       "type": "framework",
