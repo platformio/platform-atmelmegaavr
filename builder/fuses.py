@@ -58,7 +58,7 @@ def get_syscfg0_fuse(eesave, pin, uart):
                 rstpin_bit = 1
         else:
             rstpin_bit = 1
-        updipin_bit = 1 # handle AVR-DD updi pin
+        updipin_bit = 1 # enable AVR-DD updi pin by default
         return 0xC0 | updipin_bit << 4 | rstpin_bit << 3 | eesave_bit
 
     elif core == "megatinycore":
@@ -74,9 +74,9 @@ def get_syscfg0_fuse(eesave, pin, uart):
     env.Exit(1)
 
 
-# Handle AVR-DB's differently since these has MVIO pins
+# Handle AVR-DB's and DD's differently since these has MVIO pins
 def get_syscfg1_fuse(mvio):
-    if core == "dxcore" and ("db" in board.get("build.mcu").lower()):
+    if core == "dxcore" and (("db" in board.get("build.mcu").lower()) or ("dd" in board.get("build.mcu").lower())):
         if(mvio == "yes"):
             return 0x0E
         else:
