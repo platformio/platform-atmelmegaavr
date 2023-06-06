@@ -79,7 +79,7 @@ def get_syscfg0_fuse(eesave, pin, uart):
 
 # Handle AVR-DB's and DD's differently since these has MVIO pins
 def get_syscfg1_fuse(mvio):
-    if core == "dxcore" and (("db" in board.get("build.mcu").lower()) or ("dd" in board.get("build.mcu").lower())):
+    if core == "dxcore" and ("db" or "dd" in board.get("build.mcu").lower()):
         if(mvio == "yes"):
             return 0x0E
         else:
