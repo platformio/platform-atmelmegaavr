@@ -58,7 +58,8 @@ def get_syscfg0_fuse(eesave, pin, uart):
                 rstpin_bit = 1
         else:
             rstpin_bit = 1
-        return 0xC0 | rstpin_bit << 3 | eesave_bit
+        updipin_bit = 1 # handle AVR-DD updi pin
+        return 0xC0 | updipin_bit << 4 | rstpin_bit << 3 | eesave_bit
 
     elif core == "megatinycore":
         if pin == "gpio":
