@@ -58,7 +58,10 @@ def get_syscfg0_fuse(eesave, pin, uart):
                 rstpin_bit = 1
         else:
             rstpin_bit = 1
-        updipin_bit = 1 # enable AVR-DD updi pin by default
+        if ("dd" in board.get("build.mcu").lower()):
+            updipin_bit = 1 # enable AVR-DD updi pin by default
+        else:
+            updipin_bit = 0            
         return 0xC0 | updipin_bit << 4 | rstpin_bit << 3 | eesave_bit
 
     elif core == "megatinycore":
