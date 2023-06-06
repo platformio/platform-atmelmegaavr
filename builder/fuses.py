@@ -156,7 +156,7 @@ def calculate_fuses(board_config, predefined_fuses):
     print("Oscillator = %s" % oscillator)
     print("BOD level = %s" % bod)
     print("Save EEPROM = %s" % eesave)
-    if core == "dxcore" and "db" in board.get("build.mcu").lower():
+    if core == "dxcore" and ("db" or "dd" in board.get("build.mcu").lower()):
         print("MVIO enable = %s" % mvio)
     print("%s = %s" % (
         "Reset pin mode" if core in ("MegaCoreX", "dxcore") else "UPDI pin mode", pin))
