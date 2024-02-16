@@ -124,12 +124,13 @@ env.Append(
     UPLOADBOOTCMD="$BOOTUPLOADER $BOOTUPLOADERFLAGS $UPLOAD_FLAGS $BOOTFLAGS",
 )
 
-if not env.BoardConfig().get("upload", {}).get("require_upload_port", False):
+# Add upload serial port to Avrdude flags list if a jtag2updi or serialupdi programmer
+if env.subst("$UPLOAD_PROTOCOL") in ("jtag2updi", "serialupdi"):
+    env.AutodetectUploadPort()
+    env.Append(BOOTUPLOADERFLAGS=["-P", '"$UPLOAD_PORT"'])
+else:
     # upload methods via USB
     env.Append(BOOTUPLOADERFLAGS=["-P", "usb"])
-else:
-    env.AutodetectUploadPort()
-    env.Append(FUSESUPLOADERFLAGS=["-P", '"$UPLOAD_PORT"'])
 
 if env.subst("$UPLOAD_PROTOCOL") != "custom":
     env.Append(BOOTUPLOADERFLAGS=["-c", "$UPLOAD_PROTOCOL"])
