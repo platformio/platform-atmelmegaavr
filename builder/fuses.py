@@ -14,18 +14,54 @@ def is_dxcore_dd_target():
     return core == "dxcore" and "dd" in board.get("build.mcu").lower()
 
 
-def get_bodcfg_fuse(bod):
+def get_dxcore_bodcfg_fuse(bod, bodmode):
+    bod = bod.lower()
+    bodmode = bodmode.lower()
+
+    bodlev_bits = {
+        "1.9v": 0b000,
+        "1v9": 0b000,
+        "2.45v": 0b001,
+        "2v45": 0b001,
+        "2.7v": 0b010,
+        "2.70v": 0b010,
+        "2v7": 0b010,
+        "2v70": 0b010,
+        "2.85v": 0b011,
+        "2v85": 0b011,
+    }
+
+    bodmode_bits = {
+        "disabled": None,
+        "enabled": 0b00101,
+        "ensampfast": 0b00110,
+        "ensampslow": 0b10110,
+        "samplefast": 0b01010,
+        "sampledfast": 0b01010,
+        "sampleslow": 0b11010,
+        "sampledslow": 0b11010,
+        "sampdisfast": 0b01000,
+        "sampdisslow": 0b11000,
+        "endisholdwake": 0b01100,
+    }
+
+    if bodmode not in bodmode_bits:
+        sys.stderr.write("Error: Unsupported DxCore BOD mode '%s' for %s\n" % (bodmode, target))
+        env.Exit(1)
+
+    if bodmode_bits[bodmode] is None:
+        return 0x00
+
+    if bod not in bodlev_bits:
+        sys.stderr.write("Error: Unsupported DxCore BOD level '%s' for %s\n" % (bod, target))
+        env.Exit(1)
+
+    return (bodlev_bits[bod] << 5) | bodmode_bits[bodmode]
+
+
+def get_bodcfg_fuse(bod, bodmode="disabled"):
     if core == "dxcore":
-        if bod == "2.85v":
-            return 0x74
-        elif bod == "2.7v":
-            return 0x54
-        elif bod == "2.45v":
-            return 0x34
-        elif bod == "1.9v":
-            return 0x14
-        else:  # bod disabled
-            return 0x00
+        return get_dxcore_bodcfg_fuse(bod, bodmode)
     elif core in ("MegaCoreX", "megatinycore"):
         if bod == "4.3v":
             return 0xF4
@@ -170,6 +206,7 @@ def calculate_fuses(board_config, predefined_fuses):
     f_cpu = board_config.get("build.f_cpu", "16000000L").upper()
     oscillator = board_config.get("hardware.oscillator", "internal").lower()
     bod = board_config.get("hardware.bod", "2.6v").lower()
+    bodmode = board_config.get("hardware.bodmode", "disabled").lower()
     uart = board_config.get("hardware.uart", "no_bootloader").lower()
     eesave = board_config.get("hardware.eesave", "yes").lower()
     mvio = board_config.get("hardware.mvio_enable", "no").lower()
@@ -188,6 +225,8 @@ def calculate_fuses(board_config, predefined_fuses):
     print("Clock speed = %s" % f_cpu)
     print("Oscillator = %s" % oscillator)
     print("BOD level = %s" % bod)
+    if core == "dxcore":
+        print("BOD mode = %s" % bodmode)
     print("Save EEPROM = %s" % eesave)
     if core == "dxcore" and "db" in board.get("build.mcu").lower():
         print("MVIO enable = %s" % mvio)
@@ -197,7 +236,7 @@ def calculate_fuses(board_config, predefined_fuses):
 
     return (
         predefined_fuses[0] or format_fuse_value(get_wdtcfg_fuse()),
-        predefined_fuses[1] or format_fuse_value(get_bodcfg_fuse(bod)),
+        predefined_fuses[1] or format_fuse_value(get_bodcfg_fuse(bod, bodmode)),
         predefined_fuses[2] or format_fuse_value(get_osccfg_fuse(f_cpu, oscillator)),
         "",  # reserved
         predefined_fuses[4] or format_fuse_value(get_tcd0cfg_fuse()),
