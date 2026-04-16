@@ -10,6 +10,10 @@ def get_wdtcfg_fuse():
     return 0x00
 
 
+def is_dxcore_dd_target():
+    return core == "dxcore" and "dd" in board.get("build.mcu").lower()
+
+
 def get_bodcfg_fuse(bod):
     if core == "dxcore":
         if bod == "2.85v":
@@ -45,11 +49,23 @@ def get_osccfg_fuse(f_cpu, oscillator):
 
 
 def get_tcd0cfg_fuse():
+    if core == "dxcore":
+        # DxCore leaves TCD0CFG erased by default.
+        return 0xFF
     return 0x00
 
 
 def get_syscfg0_fuse(eesave, pin, uart):
     eesave_bit = 1 if eesave == "yes" else 0
+    if is_dxcore_dd_target():
+        if pin == "gpio" and uart == "no_bootloader":
+            resetpin_bits = 0b01
+        else:
+            # PlatformIO currently exposes only reset/gpio, so map these to the
+            # safe AVR-DD defaults: RESET+UPDI when reset is selected or a
+            # bootloader is in use.
+            resetpin_bits = 0b11
+        return 0xC0 | (resetpin_bits << 3) | eesave_bit
     if core in ("MegaCoreX", "dxcore"):
         if pin == "gpio":
             if uart == "no_bootloader":
@@ -75,6 +91,20 @@ def get_syscfg0_fuse(eesave, pin, uart):
 
 # Handle AVR-DB's differently since these has MVIO pins
 def get_syscfg1_fuse(mvio):
+    if is_dxcore_dd_target():
+        startuptime = str(board.get("hardware.startuptime", "8")).lower().replace("ms", "")
+        sut_bits = {
+            "0": 0b000,
+            "1": 0b001,
+            "2": 0b010,
+            "4": 0b011,
+            "8": 0b100,
+            "16": 0b101,
+            "32": 0b110,
+            "64": 0b111,
+        }.get(startuptime, 0b100)
+        mvio_bits = 0b01 if mvio == "yes" else 0b10
+        return (mvio_bits << 3) | sut_bits
     if core == "dxcore" and ("db" in board.get("build.mcu").lower()):
         if(mvio == "yes"):
             return 0x0E
