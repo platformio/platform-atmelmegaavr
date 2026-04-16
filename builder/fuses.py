@@ -50,8 +50,8 @@ def get_osccfg_fuse(f_cpu, oscillator):
 
 def get_tcd0cfg_fuse():
     if core == "dxcore":
-        # DxCore leaves TCD0CFG erased by default.
-        return 0xFF
+        # DxCore's own bootloader/fuse flows do not write TCD0CFG.
+        return None
     return 0x00
 
 
@@ -140,7 +140,8 @@ def get_lockbit_fuse():
     if core in ("arduino", "MegaCoreX", "megatinycore"):
         return 0xC5
     elif core == "dxcore":
-        return 0x5CC5C55C
+        # DxCore's bootloader/fuse flows do not write lockbits by default.
+        return None
     else:
         sys.stderr.write("Error: Couldn't calculate lockbit for %s\n" % target)
         env.Exit(1)
@@ -157,6 +158,12 @@ def print_fuses_info(fuse_values, fuse_names, lock_fuse):
     if lock_fuse:
         print("[lock  / lockbit  = %s]" % lock_fuse)
     print("-------------------------\n")
+
+
+def format_fuse_value(value):
+    if value is None:
+        return ""
+    return "0x%.2X" % value
 
 
 def calculate_fuses(board_config, predefined_fuses):
@@ -189,15 +196,15 @@ def calculate_fuses(board_config, predefined_fuses):
     print("-------------------------")
 
     return (
-        predefined_fuses[0] or "0x%.2X" % get_wdtcfg_fuse(),
-        predefined_fuses[1] or "0x%.2X" % get_bodcfg_fuse(bod),
-        predefined_fuses[2] or "0x%.2X" % get_osccfg_fuse(f_cpu, oscillator),
+        predefined_fuses[0] or format_fuse_value(get_wdtcfg_fuse()),
+        predefined_fuses[1] or format_fuse_value(get_bodcfg_fuse(bod)),
+        predefined_fuses[2] or format_fuse_value(get_osccfg_fuse(f_cpu, oscillator)),
         "",  # reserved
-        predefined_fuses[4] or "0x%.2X" % get_tcd0cfg_fuse(),
-        predefined_fuses[5] or "0x%.2X" % get_syscfg0_fuse(eesave, pin, uart),
-        predefined_fuses[6] or "0x%.2X" % get_syscfg1_fuse(mvio),
-        predefined_fuses[7] or "0x%.2X" % get_append_fuse(),
-        predefined_fuses[8] or "0x%.2X" % get_bootend_fuse(uart),
+        predefined_fuses[4] or format_fuse_value(get_tcd0cfg_fuse()),
+        predefined_fuses[5] or format_fuse_value(get_syscfg0_fuse(eesave, pin, uart)),
+        predefined_fuses[6] or format_fuse_value(get_syscfg1_fuse(mvio)),
+        predefined_fuses[7] or format_fuse_value(get_append_fuse()),
+        predefined_fuses[8] or format_fuse_value(get_bootend_fuse(uart)),
     )
 
 
@@ -241,7 +248,7 @@ if (
     env.Exit(1)
 
 fuse_values = [board_fuses.get(fname, "") for fname in fuse_names]
-lock_fuse = board_fuses.get("lockbit", "0x%.2X" % get_lockbit_fuse())
+lock_fuse = board_fuses.get("lockbit", format_fuse_value(get_lockbit_fuse()))
 if core in ("MegaCoreX", "megatinycore", "dxcore"):
     fuse_values = calculate_fuses(board, fuse_values)
 
