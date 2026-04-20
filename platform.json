@@ -42,18 +42,18 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~1.1.2"
+      "version": "~1.1.6"
     },
     "framework-arduino-megaavr-megatinycore": {
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~2.6.7"
+      "version": "~2.6.11"
     },
     "framework-arduino-megaavr-dxcore": {
       "type": "framework",
       "optional": true,
-      "version": "~1.5.6"
+      "version": "~1.6.2"
     },
     "tool-avrdude-megaavr": {
       "type": "uploader",
