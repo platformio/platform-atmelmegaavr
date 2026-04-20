@@ -19,15 +19,22 @@ class AtmelmegaavrPlatform(PlatformBase):
 
     def configure_default_packages(self, variables, targets):
         if not variables.get("board"):
-            return super().configure_default_packages(
-                variables, targets)
+            return super().configure_default_packages(variables, targets)
 
         build_core = variables.get(
-            "board_build.core", self.board_config(variables.get("board")).get(
-                "build.core", "arduino"))
+            "board_build.core",
+            self.board_config(variables.get("board")).get(
+                "build.core", "arduino"
+            ),
+        )
 
-        if "arduino" in variables.get("pioframework", []) and build_core != "arduino":
-            framework_package = "framework-arduino-megaavr-%s" % build_core.lower()
+        if (
+            "arduino" in variables.get("pioframework", [])
+            and build_core != "arduino"
+        ):
+            framework_package = (
+                "framework-arduino-megaavr-%s" % build_core.lower()
+            )
             self.frameworks["arduino"]["package"] = framework_package
             self.packages[framework_package]["optional"] = False
             self.packages["framework-arduino-megaavr"]["optional"] = True
@@ -36,11 +43,13 @@ class AtmelmegaavrPlatform(PlatformBase):
                 self.packages["toolchain-atmelavr"]["version"] = "~3.70300.0"
 
         if build_core in ("MegaCoreX", "megatinycore", "dxcore"):
-            # MegaCoreX and megatinycore require AVRDUDE v7.1 currently available
-            # only in atmelavr platform
+            # MegaCoreX and megatinycore require AVRDUDE v8.1 currently
+            # available only in atmelavr platform
             self.packages.pop("tool-avrdude-megaavr", None)
+            self.packages["tool-avrdude"]["optional"] = False
         else:
             self.packages.pop("tool-avrdude", None)
+            self.packages["tool-avrdude-megaavr"]["optional"] = False
 
         if any(t in targets for t in ("fuses", "bootloader")):
             if build_core in ("MegaCoreX", "megatinycore", "dxcore"):
@@ -48,5 +57,4 @@ class AtmelmegaavrPlatform(PlatformBase):
             else:
                 self.packages["tool-avrdude-megaavr"]["optional"] = False
 
-        return super().configure_default_packages(
-            variables, targets)
+        return super().configure_default_packages(variables, targets)
