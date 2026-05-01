@@ -1,0 +1,24 @@
+{
+  "build": {
+    "core": "dxcore",
+    "extra_flags": "-DARDUINO_AVR_AVR16DD14 -DARDUINO_avrdd",
+    "f_cpu": "24000000L",
+    "mcu": "avr64dd14",
+    "variant": "14pin-ddseries"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "AVR16DD14",
+  "upload": {
+    "maximum_ram_size": 2048,
+    "maximum_size": 1600,
+    "protocol": "SerialUPDI",
+    "speed": 230400
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/AVR16DD14",
+  "vendor": "Microchip"
+}
